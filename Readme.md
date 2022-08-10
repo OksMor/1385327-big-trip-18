@@ -1,7 +1,7 @@
 # Проект «Большое путешествие»
 
 * Студент: [Oksana Morzhova](https://up.htmlacademy.ru/ecmascript/18/user/1385327).
-* Наставник: `Неизвестно`.
+* Наставник: [Семён Якушев](https://htmlacademy.ru/profile/id1118791).
 
 ---
 
