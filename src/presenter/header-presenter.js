@@ -3,12 +3,14 @@ import HeaderFiltersView from '../view/header-filters-view.js';
 import { render } from '../render.js';
 
 export default class HeaderPresenter {
+  #infoContainer = null;
+  #filterContainer = null;
 
   init = ( infoContainer, filterContainer ) => {
-    this.infoContainer = infoContainer;
-    this.filterContainer = filterContainer;
+    this.#infoContainer = infoContainer;
+    this.#filterContainer = filterContainer;
 
-    render( new HeaderInfoView, this.infoContainer, 'afterbegin' );
-    render( new HeaderFiltersView, this.filterContainer );
+    render( new HeaderInfoView(), this.#infoContainer, 'afterbegin' );
+    render( new HeaderFiltersView(), this.#filterContainer );
   };
 }
