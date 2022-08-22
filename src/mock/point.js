@@ -1,4 +1,5 @@
-import { getRandomArrayElement, getRandomInteger, generateDate } from '../utils.js';
+import { generateDate } from '../utils/trip-utils.js';
+import { getRandomInteger, getRandomArrayElement } from '../utils/common.js';
 import { generateDestination } from './destination.js';
 import { generateOffer } from './offer.js';
 import { POINT_TYPES } from './const.js';

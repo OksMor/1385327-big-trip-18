@@ -1,5 +1,5 @@
-import { createElement } from '../render.js';
-import { humanizeDate, hoursMinutesDate, yearMonthDate, fullDate, eventDuration } from '../utils.js';
+import AbstractView from '../framework/view/abstract-view.js';
+import { humanizeDate, hoursMinutesDate, yearMonthDate, fullDate, eventDuration } from '../utils/trip-utils.js';
 
 const createOfferTemplate = (offer) => `
     <li class="event__offer">
@@ -64,26 +64,26 @@ const createCardTemplate = (point) => {
   );
 };
 
-export default class TripItemCardView {
-  #element = null;
+export default class TripItemCardView extends AbstractView {
+  #point = null;
 
   constructor(point) {
-    this.point = point;
+    super();
+    this.#point = point;
   }
 
   get template() {
-    return createCardTemplate(this.point);
+    return createCardTemplate(this.#point);
   }
 
-  get element() {
-    if ( !this.#element ) {
-      this.#element = createElement( this.template );
-    }
+  setEditClickHandler = (callback) => {
+    this._callback.editClick = callback;
+    this.element.querySelector('.event__rollup-btn').addEventListener('click', this.#editClickHandler);
+  };
 
-    return this.#element;
-  }
+  #editClickHandler = (evt) => {
+    evt.preventDefault();
 
-  removeElement() {
-    this.#element = null;
-  }
+    this._callback.editClick();
+  };
 }

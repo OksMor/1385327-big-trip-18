@@ -1,6 +1,19 @@
-import { createElement } from '../render.js';
-import { slashesFullDate } from '../utils.js';
+import AbstractView from '../framework/view/abstract-view.js';
+import { slashesFullDate } from '../utils/trip-utils.js';
 import { POINT_TYPES, DESTINATION_NAMES } from '../mock/const.js';
+
+const BLANK_POINT = {
+  basePrice: 0,
+  dateFrom: null,
+  dateTo: null,
+  destination: {
+    description: '',
+    name: '',
+    pictures: []
+  },
+  offers: [],
+  type: '',
+};
 
 const createOfferTemplate = (offer) => {
   const prefix = offer.title.toLowerCase().replace(' ', '-');
@@ -160,27 +173,37 @@ const createEventEditTemplate = (point) => {
   );
 };
 
-export default class EditPointView {
-  #element = null;
+export default class EditPointView extends AbstractView {
+  #point = null;
 
-  constructor(point) {
-    this.point = point;
+  constructor(point = BLANK_POINT) {
+    super();
+    this.#point = point;
   }
 
   get template() {
-
-    return createEventEditTemplate(this.point);
+    return createEventEditTemplate(this.#point);
   }
 
-  get element() {
-    if ( !this.#element ) {
-      this.#element = createElement( this.template );
-    }
+  setFormSubmitHandler = (callback) => {
+    this._callback.formSubmit = callback;
+    this.element.querySelector('form').addEventListener('submit', this.#formSubmitHandler);
+  };
 
-    return this.#element;
-  }
+  #formSubmitHandler = (evt) => {
+    evt.preventDefault();
 
-  removeElement() {
-    this.#element = null;
-  }
+    this._callback.formSubmit();
+  };
+
+  setClickHandler = (callback) => {
+    this._callback.click = callback;
+    this.element.querySelector('.event__rollup-btn').addEventListener('click', this.#clickHandler);
+  };
+
+  #clickHandler = (evt) => {
+    evt.preventDefault();
+
+    this._callback.click();
+  };
 }

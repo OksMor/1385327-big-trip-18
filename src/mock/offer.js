@@ -1,4 +1,4 @@
-import { getRandomInteger, getRandomArrayElement } from '../utils';
+import { getRandomInteger, getRandomArrayElement } from '../utils/common.js';
 import { OFFER_TYPES, OFFER_TITLES } from './const.js';
 
 export const generateOffer = () => ({
