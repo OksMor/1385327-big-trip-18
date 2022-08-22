@@ -6,7 +6,7 @@ import EditPointView from '../view/edit-point-view.js';
 import TripItemCardView from '../view/trip-item-card-view.js';
 import NoPointView from '../view/no-point-view.js';
 
-import { render } from '../render.js';
+import { render, replace } from '../framework/render.js';
 
 export default class MainPresenter {
   #infoContainer = null;
@@ -35,11 +35,11 @@ export default class MainPresenter {
     const pointEditComponent = new EditPointView(point);
 
     const replaceCardToForm = () => {
-      this.#tripList.element.replaceChild(pointEditComponent.element, pointComponent.element);
+      replace(pointEditComponent, pointComponent); // this.#tripList.element.replaceChild(pointEditComponent.element, pointComponent.element);
     };
 
     const replaceFormToCard = () => {
-      this.#tripList.element.replaceChild(pointComponent.element, pointEditComponent.element);
+      replace(pointComponent, pointEditComponent); // this.#tripList.element.replaceChild(pointComponent.element, pointEditComponent.element);
     };
 
     const onEscKeyDown = (evt) => {
@@ -50,19 +50,20 @@ export default class MainPresenter {
       }
     };
 
-    pointComponent.element.querySelector('.event__rollup-btn').addEventListener('click', () => {
+    pointComponent.setEditClickHandler(() => {
       replaceCardToForm();
       document.addEventListener('keydown', onEscKeyDown);
     });
 
-    pointEditComponent.element.querySelector('form').addEventListener('submit', (evt) => {
-      evt.preventDefault();
+    pointEditComponent.setFormSubmitHandler(() => {
+      // evt.preventDefault();
       replaceFormToCard();
       document.removeEventListener('keydown', onEscKeyDown);
     });
 
-    pointEditComponent.element.querySelector('.event__rollup-btn').addEventListener('click', () => {
+    pointEditComponent.setClickHandler(() => {
       replaceFormToCard();
+      document.removeEventListener('keydown', onEscKeyDown);
     });
 
     render(pointComponent, this.#tripList.element);
