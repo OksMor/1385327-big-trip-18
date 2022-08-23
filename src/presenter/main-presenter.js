@@ -1,5 +1,5 @@
 import HeaderInfoView from '../view/header-info-view.js';
-import HeaderFiltersView from '../view/header-filters-view.js';
+// import HeaderFiltersView from '../view/header-filters-view.js';
 import TripSortView from '../view/trip-sort-view.js';
 import TripEventsListView from '../view/trip-events-list-view.js';
 import EditPointView from '../view/edit-point-view.js';
@@ -10,15 +10,15 @@ import { render, replace } from '../framework/render.js';
 
 export default class MainPresenter {
   #infoContainer = null;
-  #filterContainer = null;
+  // #filterContainer = null;
   #tripContainer = null;
   #pointsModel = null;
   #tripList = new TripEventsListView();
   #tripPoints = [];
 
-  constructor( infoContainer, filterContainer, tripContainer, pointsModel ) {
+  constructor( infoContainer, tripContainer, pointsModel ) { //filterContainer
     this.#infoContainer = infoContainer;
-    this.#filterContainer = filterContainer;
+    // this.#filterContainer = filterContainer;
     this.#tripContainer = tripContainer;
     this.#pointsModel = pointsModel;
   }
@@ -35,11 +35,11 @@ export default class MainPresenter {
     const pointEditComponent = new EditPointView(point);
 
     const replaceCardToForm = () => {
-      replace(pointEditComponent, pointComponent); // this.#tripList.element.replaceChild(pointEditComponent.element, pointComponent.element);
+      replace(pointEditComponent, pointComponent);
     };
 
     const replaceFormToCard = () => {
-      replace(pointComponent, pointEditComponent); // this.#tripList.element.replaceChild(pointComponent.element, pointEditComponent.element);
+      replace(pointComponent, pointEditComponent);
     };
 
     const onEscKeyDown = (evt) => {
@@ -70,7 +70,8 @@ export default class MainPresenter {
   };
 
   #renderEvent = () => {
-    render( new HeaderFiltersView(), this.#filterContainer );
+    // render( new HeaderFiltersView(), this.#filterContainer );
+
     if (this.#tripPoints.length === 0) { // завязка на фильтрацию
       render( new NoPointView(), this.#tripContainer);
     } else {

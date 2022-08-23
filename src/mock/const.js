@@ -10,10 +10,17 @@ const DESTINATION_DESCRIPTIONS = [
   'Nullam nunc ex, convallis sed finibus eget, sollicitudin eget ante.',
 ];
 
+const FilterType = {
+  EVERYTHING: 'everything',
+  FUTURE: 'future',
+  PAST: 'past',
+};
+
 export {
   OFFER_TYPES,
   POINT_TYPES,
   OFFER_TITLES,
   DESTINATION_NAMES,
   DESTINATION_DESCRIPTIONS,
+  FilterType,
 };

@@ -6,7 +6,7 @@ import { POINT_TYPES } from './const.js';
 
 export const generatePoint = () => ({
   basePrice: getRandomInteger(10, 500),
-  dateFrom: generateDate(0, 1),
+  dateFrom: generateDate(-1, 1),
   dateTo: generateDate(1, 2),
   destination: getRandomArrayElement(Array.from({length: 5}, generateDestination)),
   id: getRandomInteger(1, 5),

@@ -47,6 +47,10 @@ const generateDate = (dayStart, dayEnd) => {
   return dayjs().add(daysGap, 'day').add(hoursGap, 'hour').add(minutesGap, 'minute').add(secondsGap, 'second').toDate();
 };
 
+const isPointInFuture = ({dateFrom, dateTo}) => dayjs().isSame(dayjs(dateFrom)) || dayjs().isBefore(dayjs(dateFrom)) || dayjs().isAfter(dayjs(dateFrom)) && dayjs().isBefore(dayjs(dateTo));
+
+const isPointInPast = ({dateFrom, dateTo}) => dayjs().isAfter(dayjs(dateTo)) || (dayjs().isAfter(dayjs(dateFrom)) && dayjs().isBefore(dayjs(dateTo)));
+
 export {
   humanizeDate,
   hoursMinutesDate,
@@ -54,5 +58,7 @@ export {
   fullDate,
   slashesFullDate,
   generateDate,
-  eventDuration
+  eventDuration,
+  isPointInFuture,
+  isPointInPast
 };
