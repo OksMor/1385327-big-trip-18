@@ -1,89 +1,92 @@
 import HeaderInfoView from '../view/header-info-view.js';
-// import HeaderFiltersView from '../view/header-filters-view.js';
 import TripSortView from '../view/trip-sort-view.js';
 import TripEventsListView from '../view/trip-events-list-view.js';
-import EditPointView from '../view/edit-point-view.js';
-import TripItemCardView from '../view/trip-item-card-view.js';
 import NoPointView from '../view/no-point-view.js';
 
-import { render, replace } from '../framework/render.js';
+import PointPresenter from './point-presenter.js';
+
+import { render } from '../framework/render.js';
+import { updateItem } from '../utils/common.js';
 
 export default class MainPresenter {
   #infoContainer = null;
-  // #filterContainer = null;
   #tripContainer = null;
   #pointsModel = null;
-  #tripList = new TripEventsListView();
+
+  #tripListComponent = new TripEventsListView();
+  #headerInfoComponent = new HeaderInfoView();
+  #noPointComponent = new NoPointView();
+  #tripSortComponent = new TripSortView();
+
   #tripPoints = [];
 
-  constructor( infoContainer, tripContainer, pointsModel ) { //filterContainer
+  #pointPresenter = new Map();
+
+  constructor( infoContainer, tripContainer, pointsModel ) {
     this.#infoContainer = infoContainer;
-    // this.#filterContainer = filterContainer;
     this.#tripContainer = tripContainer;
     this.#pointsModel = pointsModel;
   }
 
   init = () => {
     this.#tripPoints = [...this.#pointsModel.points];
-
+    //console.log(this.#tripPoints);
     this.#renderEvent();
   };
 
+  #renderHeaderInfo = () => {
+    render( this.#headerInfoComponent, this.#infoContainer, 'afterbegin' );
+  };
+
+  #handlePointChange = (updatedPoint) => {
+    this.#tripPoints = updateItem(this.#tripPoints, updatedPoint);
+    this.#pointPresenter.get(updatedPoint.id).init(updatedPoint);
+  };
+
+  #renderNoPoints = () => {
+    render( this.#noPointComponent, this.#tripContainer);
+  };
+
+  #renderSort = () => {
+    render( this.#tripSortComponent, this.#tripContainer );
+  };
+
+  #handleModeChange = () => {
+    this.#pointPresenter.forEach((presenter) => presenter.resetView());
+  };
 
   #renderPoint = (point) => {
-    const pointComponent = new TripItemCardView(point);
-    const pointEditComponent = new EditPointView(point);
+    const pointPresenter = new PointPresenter(this.#tripListComponent.element, this.#handlePointChange, this.#handleModeChange);
+    pointPresenter.init(point);
+    this.#pointPresenter.set(point.id, pointPresenter);
+  };
 
-    const replaceCardToForm = () => {
-      replace(pointEditComponent, pointComponent);
-    };
+  #renderPoints = () => {
+    for ( let i = 0; i < this.#tripPoints.length; i++ ) {
+      this.#renderPoint( this.#tripPoints[i] );
+    }
+  };
 
-    const replaceFormToCard = () => {
-      replace(pointComponent, pointEditComponent);
-    };
+  #clearTripList = () => {
+    this.#pointPresenter.forEach((presenter) => presenter.destroy());
+    this.#pointPresenter.clear();
+  };
 
-    const onEscKeyDown = (evt) => {
-      if (evt.key === 'Escape' || evt.key === 'Esc') {
-        evt.preventDefault();
-        replaceFormToCard();
-        document.removeEventListener('keydown', onEscKeyDown);
-      }
-    };
+  #renderTripList = () => {
+    render( this.#tripListComponent, this.#tripContainer );
 
-    pointComponent.setEditClickHandler(() => {
-      replaceCardToForm();
-      document.addEventListener('keydown', onEscKeyDown);
-    });
-
-    pointEditComponent.setFormSubmitHandler(() => {
-      // evt.preventDefault();
-      replaceFormToCard();
-      document.removeEventListener('keydown', onEscKeyDown);
-    });
-
-    pointEditComponent.setClickHandler(() => {
-      replaceFormToCard();
-      document.removeEventListener('keydown', onEscKeyDown);
-    });
-
-    render(pointComponent, this.#tripList.element);
+    this.#renderPoints();
   };
 
   #renderEvent = () => {
-    // render( new HeaderFiltersView(), this.#filterContainer );
 
     if (this.#tripPoints.length === 0) { // завязка на фильтрацию
-      render( new NoPointView(), this.#tripContainer);
+      this.#renderNoPoints();
     } else {
-      render( new HeaderInfoView(), this.#infoContainer, 'afterbegin' );
+      this.#renderHeaderInfo();
 
-
-      render( new TripSortView(), this.#tripContainer );
-      render( this.#tripList, this.#tripContainer );
-
-      for ( let i = 0; i < this.#tripPoints.length; i++ ) {
-        this.#renderPoint( this.#tripPoints[i] );
-      }
+      this.#renderSort();
+      this.#renderTripList();
     }
   };
 }
