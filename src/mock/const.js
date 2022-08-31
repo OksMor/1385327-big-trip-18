@@ -16,6 +16,11 @@ const FilterType = {
   PAST: 'past',
 };
 
+const Mode = {
+  DEFAULT: 'DEFAULT',
+  EDITING: 'EDITING',
+};
+
 export {
   OFFER_TYPES,
   POINT_TYPES,
@@ -23,4 +28,5 @@ export {
   DESTINATION_NAMES,
   DESTINATION_DESCRIPTIONS,
   FilterType,
+  Mode,
 };
