@@ -14,7 +14,7 @@ const MINUTES = {
 };
 
 const eventDuration = (dateTo, dateFrom) => {
-  const fullMinutes = dayjs(dateTo).diff(dateFrom, 'minute'); //console.log(fullMinutes);
+  const fullMinutes = dayjs(dateTo).diff(dayjs(dateFrom), 'minute'); //console.log(fullMinutes);
   const hours = Math.trunc(fullMinutes / MINUTES.minuteInHour);
   const minutes = fullMinutes % MINUTES.minuteInHour;
   const days = Math.trunc(hours / MINUTES.hoursInDay);
@@ -51,6 +51,22 @@ const isPointInFuture = ({dateFrom, dateTo}) => dayjs().isSame(dayjs(dateFrom)) 
 
 const isPointInPast = ({dateFrom, dateTo}) => dayjs().isAfter(dayjs(dateTo)) || (dayjs().isAfter(dayjs(dateFrom)) && dayjs().isBefore(dayjs(dateTo)));
 
+const sortByDay = (a, b) => {
+  if (dayjs(b.dateFrom).isAfter(dayjs(a.dateFrom))) {
+    return 1;
+  } else {
+    return -1;
+  }
+};
+
+const sortByPrice = (a, b) => b.basePrice - a.basePrice;
+
+const sortByTime = (a, b) => {
+  const fullMinutesA = dayjs(a.dateTo).diff(dayjs(a.dateFrom));
+  const fullMinutesB = dayjs(b.dateTo).diff(dayjs(b.dateFrom));
+  return fullMinutesB - fullMinutesA;
+};
+
 export {
   humanizeDate,
   hoursMinutesDate,
@@ -60,5 +76,8 @@ export {
   generateDate,
   eventDuration,
   isPointInFuture,
-  isPointInPast
+  isPointInPast,
+  sortByDay,
+  sortByPrice,
+  sortByTime,
 };

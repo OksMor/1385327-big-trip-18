@@ -16,6 +16,12 @@ const FilterType = {
   PAST: 'past',
 };
 
+const SortType = {
+  DAY: 'day',
+  PRICE: 'price',
+  TIME: 'time',
+};
+
 const Mode = {
   DEFAULT: 'DEFAULT',
   EDITING: 'EDITING',
@@ -29,4 +35,5 @@ export {
   DESTINATION_DESCRIPTIONS,
   FilterType,
   Mode,
+  SortType,
 };
