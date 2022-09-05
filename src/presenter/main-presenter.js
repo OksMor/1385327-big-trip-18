@@ -5,22 +5,27 @@ import NoPointView from '../view/no-point-view.js';
 
 import PointPresenter from './point-presenter.js';
 
-import { render } from '../framework/render.js';
+import { render, remove } from '../framework/render.js';
 import { updateItem } from '../utils/common.js';
+import { sortByDay, sortByPrice, sortByTime } from '../utils/trip-utils.js';
+import { SortType } from '../mock/const.js';
 
 export default class MainPresenter {
   #infoContainer = null;
   #tripContainer = null;
   #pointsModel = null;
+  #tripSortComponent = null;
 
   #tripListComponent = new TripEventsListView();
   #headerInfoComponent = new HeaderInfoView();
   #noPointComponent = new NoPointView();
-  #tripSortComponent = new TripSortView();
+  //#tripSortComponent = new TripSortView();
 
   #tripPoints = [];
+  #sourcedEvents = [];
 
   #pointPresenter = new Map();
+  #currentSortType = SortType.DAY;
 
   constructor( infoContainer, tripContainer, pointsModel ) {
     this.#infoContainer = infoContainer;
@@ -30,6 +35,7 @@ export default class MainPresenter {
 
   init = () => {
     this.#tripPoints = [...this.#pointsModel.points];
+    this.#sourcedEvents = [...this.#pointsModel.points];
     //console.log(this.#tripPoints);
     this.#renderEvent();
   };
@@ -47,8 +53,39 @@ export default class MainPresenter {
     render( this.#noPointComponent, this.#tripContainer);
   };
 
-  #renderSort = () => {
+  #sortPoints = (sortType) => {
+    switch (sortType) {
+      case SortType.TIME:
+        this.#tripPoints.sort(sortByTime);
+        break;
+      case SortType.PRICE:
+        this.#tripPoints.sort(sortByPrice);
+        break;
+      default:
+        this.#tripPoints.sort(sortByDay);
+    }
+
+    this.#currentSortType = sortType;
+  };
+
+  #handleSortTypeChange = (sortType) => {
+    if (this.#currentSortType === sortType) {
+      return;
+    }
+    this.#sortPoints(sortType);
+    this.#renderSort(sortType);
+    this.#clearTripList();
+    this.#renderTripList();
+  };
+
+  #renderSort = (sortType = SortType.DAY) => {
+    if (this.#tripSortComponent instanceof TripSortView) {
+      remove(this.#tripSortComponent);
+    }
+
+    this.#tripSortComponent = new TripSortView(sortType);
     render( this.#tripSortComponent, this.#tripContainer );
+    this.#tripSortComponent.setSortTypeChangeHandler(this.#handleSortTypeChange);
   };
 
   #handleModeChange = () => {
