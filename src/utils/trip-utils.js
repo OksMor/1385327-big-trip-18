@@ -52,7 +52,7 @@ const isPointInFuture = ({dateFrom, dateTo}) => dayjs().isSame(dayjs(dateFrom)) 
 const isPointInPast = ({dateFrom, dateTo}) => dayjs().isAfter(dayjs(dateTo)) || (dayjs().isAfter(dayjs(dateFrom)) && dayjs().isBefore(dayjs(dateTo)));
 
 const sortByDay = (a, b) => {
-  if (dayjs(b.dateFrom).isAfter(dayjs(a.dateFrom))) {
+  if (dayjs(a.dateFrom).isAfter(dayjs(b.dateFrom))) {
     return 1;
   } else {
     return -1;
