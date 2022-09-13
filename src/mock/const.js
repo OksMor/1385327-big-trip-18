@@ -1,7 +1,7 @@
 const POINT_TYPES = ['taxi', 'bus', 'train', 'ship', 'drive', 'flight', 'check-in', 'sightseeing', 'restaurant'];
 const OFFER_TYPES = ['taxi', 'bus', 'train', 'ship', 'drive', 'flight', 'check-in', 'sightseeing', 'restaurant'];
 const OFFER_TITLES = ['Order Uber', 'Add luggage', 'Switch to comfort', 'Rent a car', 'Add meal', 'Add breakfast', 'Book tickets', 'Lunch in city', 'Choose seats', 'Travel by train'];
-const DESTINATION_NAMES = ['Amsterdam', 'Chamonix', 'Geneva'];
+const DESTINATION_NAMES = ['Chamonix', 'Geneva', 'Amsterdam', ];
 const DESTINATION_DESCRIPTIONS = [
   'Lorem ipsum dolor sit amet, consectetur adipiscing elit.',
   'Cras aliquet varius magna, non porta ligula feugiat eget.',

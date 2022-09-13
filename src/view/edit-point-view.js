@@ -1,6 +1,7 @@
-import AbstractView from '../framework/view/abstract-view.js';
+import AbstractStatefulView from '../framework/view/abstract-stateful-view.js';
 import { slashesFullDate } from '../utils/trip-utils.js';
-import { POINT_TYPES, DESTINATION_NAMES } from '../mock/const.js';
+import { getNumberFromString } from '../utils/common.js';
+import { POINT_TYPES, DESTINATION_NAMES } from '../mock/const.js'; //DESTINATION_NAMES
 
 const BLANK_POINT = {
   basePrice: 0,
@@ -14,27 +15,6 @@ const BLANK_POINT = {
   offers: [],
   type: '',
 };
-
-const createOfferTemplate = (offer) => {
-  const prefix = offer.title.toLowerCase().replace(' ', '-');
-
-  return `
-    <div class="event__offer-selector">
-      <input class="event__offer-checkbox  visually-hidden"
-          id="event-offer-${prefix}-${offer.id}"
-          type="checkbox"
-          name="event-offer-${prefix}"
-      >
-      <label class="event__offer-label" for="event-offer-${prefix}-${offer.id}">
-        <span class="event__offer-title">${offer.title}</span>
-        &plus;&euro;&nbsp;
-        <span class="event__offer-price">${offer.price}</span>
-      </label>
-    </div>
-  `;
-};
-
-const createOffersTemplate = (offers) => offers.map(createOfferTemplate).join('');
 
 const createEventTypesTemplate = (types, eventType) => (
   `
@@ -53,32 +33,64 @@ const createEventTypesTemplate = (types, eventType) => (
         `
 );
 
-const createDestinationsTemplate = (destinations) => (
+const createDestinationsTemplate = (destinationName) => (
   `
-    ${destinations.map((destination) => `<option value="${destination}"></option>`).join('')}
-  `
-);
-
-const createDestinationPhotosTemplate = (destinationPhotos) => (
-  `
-    ${destinationPhotos.map((photo) => `<img class="event__photo" src="${photo.src}" alt="${photo.description}">`).join('')}
+    ${destinationName.map((destination) => `<option value="${destination.name}"></option>`).join('')}
   `
 );
 
-const createEventEditTemplate = (point) => {
-  // const {basePrice, dateFrom, dateTo, destination, offers, type} = point;
-  const {
-    basePrice = 0,
-    dateFrom = null,
-    dateTo = null,
-    destination = {
-      description: '',
-      name: '',
-      pictures: []
-    },
-    offers = [],
-    type = ''
-  } = point;
+const createDestinationPhotosTemplate = (currentDestination) => (
+  `
+    ${currentDestination.map((photo) => `<img class="event__photo" src="${photo.src}" alt="${photo.description}">`).join('')}
+  `
+);
+
+// const createOfferTemplate = (offer) => {
+//   const prefix = offer.title.toLowerCase().replace(' ', '-');
+//   return `
+//     <div class="event__offer-selector">
+//       <input class="event__offer-checkbox  visually-hidden"
+//           id="event-offer-${prefix}-${offer.id}"
+//           type="checkbox"
+//           name="event-offer-${prefix}"
+//       >
+//       <label class="event__offer-label" for="event-offer-${prefix}-${offer.id}">
+//         <span class="event__offer-title">${offer.title}</span>
+//         &plus;&euro;&nbsp;
+//         <span class="event__offer-price">${offer.price}</span>
+//       </label>
+//     </div>
+//   `;
+// };
+// const createOffersTemplate = (offersData) => offersData.map(createOfferTemplate(offersData)).join('');
+
+const createOffersTemplate = (allOffers) => {
+  const availableOffers = allOffers.offers.map((offer) => `
+    <div class="event__offer-selector">
+      <input class="event__offer-checkbox visually-hidden"
+      id="event-offer-${offer.title.toLowerCase()}-1"
+      data-offer-id="${offer.id}"
+      type="checkbox"
+      name="event-offer-${offer.title.toLowerCase()}">
+      <label class="event__offer-label" for="event-offer-${offer.title.toLowerCase()}-1">
+        <span class="event__offer-title">${offer.title}</span>
+        &plus;&euro;&nbsp;
+        <span class="event__offer-price">${offer.price}</span>
+      </label>
+    </div>
+  `).join('');
+  return availableOffers;
+};
+
+const createEventEditTemplate = (data) => {
+  const {type, offers, dateFrom, dateTo, basePrice, destination, allOffers, currentOffers, selectedOffers, allDestinations, currentDestination } = data;
+  console.log('data Template!!!', data);
+  console.log('offers Template', offers);
+  console.log('allOffers Temp', allOffers);
+  console.log('currentOffers Temp', currentOffers);
+  console.log('selectedOffers Temp', selectedOffers);
+  console.log('allDestinations Temp', allDestinations);
+  console.log('currentDestination Temp', currentDestination);
 
   const dateFromSlashes = dateFrom !== null
     ? slashesFullDate(dateFrom)
@@ -88,16 +100,19 @@ const createEventEditTemplate = (point) => {
     ? slashesFullDate(dateTo)
     : '';
 
-  const buttonEditTemplate = Object.keys(point).length !== 0
+  const buttonEditTemplate = Object.keys(data).length !== 0
     ? `<button class="event__rollup-btn" type="button">
         <span class="visually-hidden">Open event</span>
       </button>`
     : '';
 
-  const offersTemplate = createOffersTemplate(offers);
   const eventTypesTemplate = createEventTypesTemplate(POINT_TYPES, type);
-  const destinationsTemplate = createDestinationsTemplate(DESTINATION_NAMES);
-  const destinationPhotosTemplate = createDestinationPhotosTemplate(destination.pictures);
+
+  const offersTemplate = createOffersTemplate(data);
+
+  const destinationsTemplate = createDestinationsTemplate(DESTINATION_NAMES);//DESTINATION_NAMES
+  const destinationPhotosTemplate = createDestinationPhotosTemplate(data);
+  // const tripDestination = destinations.find((pointDestination) => (pointDestination.id === destination));
 
   return (
     `<li class="trip-events__item">
@@ -142,7 +157,7 @@ const createEventEditTemplate = (point) => {
           </div>
 
           <button class="event__save-btn  btn  btn--blue" type="submit">Save</button>
-          <button class="event__reset-btn" type="reset">${Object.keys(point).length === 0 ? 'Cancel' : 'Delete'}</button> ${buttonEditTemplate}
+          <button class="event__reset-btn" type="reset">${Object.keys(data).length === 0 ? 'Cancel' : 'Delete'}</button> ${buttonEditTemplate}
           <!-- <button class="event__rollup-btn" type="button">
             <span class="visually-hidden">Open event</span>
           </button> -->
@@ -173,17 +188,27 @@ const createEventEditTemplate = (point) => {
   );
 };
 
-export default class EditPointView extends AbstractView {
-  #point = null;
+export default class EditPointView extends AbstractStatefulView {
 
-  constructor(point = BLANK_POINT) {
+  constructor(point = BLANK_POINT, allOffers, currentOffers, selectedOffers, allDestinations, currentDestination) {
     super();
-    this.#point = point;
+    this._state = EditPointView.parsePointToState(point, allOffers, currentOffers, selectedOffers, allDestinations, currentDestination);
+    this.#setInnerHandlers();
   }
 
   get template() {
-    return createEventEditTemplate(this.#point);
+    return createEventEditTemplate(this._state);
   }
+
+  #setInnerHandlers = () => {
+    this.element.querySelector('.event__type-list').addEventListener('click', this.#changeTypePoint );
+    this.element.querySelector('.event__available-offers').addEventListener('click', this.#changeOffer );
+    this.element.querySelector('#event-destination-1' ).addEventListener( 'change', this.#changeDestination );
+
+    this.element.querySelector('#event-start-time-1').addEventListener('input', this.#dateFromInputHandler);
+    this.element.querySelector('#event-end-time-1').addEventListener('input', this.#dateToInputHandler);
+    this.element.querySelector('#event-price-1').addEventListener('input', this.#priceInputHandler);
+  };
 
   setFormSubmitHandler = (callback) => {
     this._callback.formSubmit = callback;
@@ -193,7 +218,8 @@ export default class EditPointView extends AbstractView {
   #formSubmitHandler = (evt) => {
     evt.preventDefault();
 
-    this._callback.formSubmit(this.#point);
+    // this._callback.formSubmit(this.#point);
+    this._callback.formSubmit(EditPointView.parseStateToPoint(this._state));
   };
 
   setClickHandler = (callback) => {
@@ -205,5 +231,81 @@ export default class EditPointView extends AbstractView {
     evt.preventDefault();
 
     this._callback.click();
+  };
+
+  _restoreHandlers = () => {
+    this.#setInnerHandlers();
+    this.setFormSubmitHandler(this._callback.formSubmit);
+    this.setClickHandler(this._callback.click);
+  };
+
+  #changeTypePoint = ( evt ) => {
+    if ( evt.target.classList.contains('event__type-input') ) {
+      this.updateElement({
+        type: evt.target.value,
+        offers: [],
+      });
+    }
+  };
+
+  #changeOffer = ( evt ) => {
+    if ( evt.target.classList.contains('event__offer-checkbox') ) {
+      const isTrue = this._state.offers.includes(getNumberFromString( evt.target.id ));
+      const numberId = getNumberFromString( evt.target.id );
+
+      this._setState({
+        offers: !isTrue ? [...this._state.offers, numberId] : this._state.offers.filter(( item ) => item !== numberId ),
+      });
+    }
+  };
+
+  #changeDestination = ( evt ) => {
+    this.updateElement({
+      destination: evt.target.value,
+    });
+  };
+
+  #dateFromInputHandler = (evt) => {
+    this._setState({
+      dateFrom: evt.target.value
+    });
+  };
+
+  #dateToInputHandler = (evt) => {
+    this._setState({
+      dateTo: evt.target.value
+    });
+  };
+
+  #priceInputHandler = (evt) => {
+    this._setState({
+      basePrice: evt.target.value
+    });
+  };
+
+  reset = ( point ) => {
+    this.updateElement(
+      EditPointView.parsePointToState( point )
+    );
+  };
+
+  static parsePointToState = (point, allOffers, currentOffers, selectedOffers, allDestinations, currentDestination) => ({
+    ...point,
+    allOffers: allOffers,
+    currentOffers: currentOffers,
+    selectedOffers: selectedOffers,
+    allDestinations: allDestinations,
+    currentDestination: currentDestination});
+
+  static parseStateToPoint = (state) => {
+    const point = { ...state };
+
+    delete point.allOffers;
+    delete point.currentOffers;
+    delete point.selectedOffers;
+    delete point.allDestinations;
+    delete point.currentDestination;
+
+    return point;
   };
 }

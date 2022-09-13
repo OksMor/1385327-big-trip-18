@@ -25,8 +25,11 @@ const updateItem = (items, update) => {
   ];
 };
 
+const getNumberFromString = ( str ) => Number( str.split('').filter((item) => Number(item)).join('') );
+
 export {
   getRandomInteger,
   getRandomArrayElement,
-  updateItem
+  updateItem,
+  getNumberFromString
 };
