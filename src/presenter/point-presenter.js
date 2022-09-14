@@ -28,27 +28,27 @@ export default class PointPresenter {
 
     const prevPointComponent = this.#pointComponent;
     const prevPointEditComponent = this.#pointEditComponent;
-    console.log('PK-1', prevPointComponent);
-    console.log('PE-1', prevPointEditComponent);
-    const allOffers = pointsModel.offersData; console.log('allOffers', allOffers);
+    // console.log('PK-1', prevPointComponent);
+    // console.log('PE-1', prevPointEditComponent);
+    const allOffers = pointsModel.offersData; // console.log('allOffers', allOffers);
 
-    const currentOffers = pointsModel.getCurrentOffers(this.#point); console.log('currentOffers', currentOffers);
-    const selectedOffers = pointsModel.getSelectedOffers(this.#point); console.log('selectedOffers', selectedOffers);
+    const currentOffers = pointsModel.getCurrentOffers(this.#point); // console.log('currentOffers', currentOffers);
+    const selectedOffers = pointsModel.getSelectedOffers(this.#point); // console.log('selectedOffers', selectedOffers);
 
-    const allDestinations = pointsModel.destinationsData; console.log('allDestinations', allDestinations);
-    const currentDestination = pointsModel.getCurrentDestination(this.#point); console.log('currentDestination', currentDestination);
+    const allDestinations = pointsModel.destinationsData; // console.log('allDestinations', allDestinations);
+    const currentDestination = pointsModel.getCurrentDestination(this.#point); // console.log('currentDestination', currentDestination);
 
 
-    this.#pointComponent = new TripItemCardView(point, allOffers, currentOffers, selectedOffers, allDestinations, currentDestination); console.log('PK-2', this.#pointComponent);
-    this.#pointEditComponent = new EditPointView(point, allOffers, currentOffers, selectedOffers, allDestinations, currentDestination); console.log('PE-2', this.#pointEditComponent);//, currentOffers, selectedOffers, allDestinations, currentDestination
+    this.#pointComponent = new TripItemCardView(point, allOffers, currentOffers, selectedOffers, allDestinations, currentDestination); // console.log('PK-2', this.#pointComponent);
+    this.#pointEditComponent = new EditPointView(point, allOffers, currentOffers, selectedOffers, allDestinations, currentDestination); // console.log('PE-2', this.#pointEditComponent);
 
     this.#pointComponent.setEditClickHandler(this.#handleEditClick);
     this.#pointComponent.setFavoriteClickHandler(this.#handleFavoriteClick);
 
     this.#pointEditComponent.setFormSubmitHandler(this.#handleFormSubmit);
     this.#pointEditComponent.setClickHandler(this.#handleClick);
-    console.log('PK-3', prevPointComponent);
-    console.log('PE-3', prevPointEditComponent);
+    // console.log('PK-3', prevPointComponent);
+    // console.log('PE-3', prevPointEditComponent);
     if (prevPointComponent === null || prevPointEditComponent === null) {
       render(this.#pointComponent, this.#tripContainer);
       return;
