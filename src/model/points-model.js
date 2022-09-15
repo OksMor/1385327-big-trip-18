@@ -19,17 +19,17 @@ export default class PointsModel {
     return this.#offersData;
   }
 
-  getSelectedOffers = function(point) {
+  getSelectedOffers = (point) => {
     const selectedOffers = this.#offersData.find((offer) => offer.type === point.type).offers.filter((offer) => point.offers.includes(offer.id));
     return selectedOffers;
   };
 
-  getCurrentOffers = function(point) {
+  getCurrentOffers = (point) => {
     const currentOffers = this.#offersData.find((offer) => offer.type === point.type);
     return currentOffers;
   };
 
-  getCurrentDestination = function(point) {
+  getCurrentDestination = (point) => {
     this.currentDestination = destinationsData.find((destination) => (destination.id === point.destination));
     return this.currentDestination;
   };
