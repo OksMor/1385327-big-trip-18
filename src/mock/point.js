@@ -13,32 +13,23 @@ const getPointType = () => {
 const getRandomOffersIds = (type) => {
 
   const randomIds = [];
-  const currentOffers = offersData.find((offer) => offer.type === type); console.log('currentOffers', currentOffers);
-  const currentOffersLength = currentOffers.offers.length; console.log('!!!!!!!!!!!', type, 'currentOffers.offers.length', currentOffersLength);
+  const currentOffers = offersData.find((offer) => offer.type === type);
+  const currentOffersLength = currentOffers.offers.length;
 
-  const randomLength = getRandomInteger(0, currentOffersLength); console.log('randomLength', randomLength);
+  const randomLength = getRandomInteger(0, currentOffersLength);
 
   if (randomLength === 0) {
-    console.log(type, 'nononononono');
 
     return randomIds;
   } else {
-    while (randomIds.length < randomLength) {
-      const randomOfferId = getRandomInteger(0, (currentOffersLength - 1));
-      console.log('randomOfferId', randomOfferId);
-      const t = randomIds.includes(randomIds.value === randomOfferId); console.log(t);
+    while ( randomIds.length < randomLength) {
+      const randomOfferId = getRandomInteger(1, (currentOffersLength));
 
-      randomIds.push(currentOffers.offers[randomOfferId].id);
-      console.log('offer randomIds -', randomIds);
-
+      if (randomIds.indexOf(randomOfferId) === -1) {
+        randomIds.push(randomOfferId);
+      }
     }
-    // for (let i = 0; i < randomLength; i++) {
-    //   randomIds.push(currentOffers.offers[i].id);
-    //   const randomOfferId = getRandomInteger(0, (currentOffersLength - 1));
-    //   console.log('zahod', i, 'randomOfferId', randomOfferId);
-    //   randomIds.push(currentOffers.offers[randomOfferId].id);
-    //   console.log('offer randomIds -', randomIds);
-    // }
+
     return randomIds;
   }
 };
