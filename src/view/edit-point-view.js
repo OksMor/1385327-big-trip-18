@@ -73,15 +73,11 @@ const createOffersTemplate = (currentOffers, selectedOffers) => {
 };
 
 const createEventEditTemplate = (data) => {
-  const {type, offers, dateFrom, dateTo, basePrice, destination, allOffers, currentOffers, selectedOffers, allDestinations, currentDestination} = data;
-  console.log('data Template!!!', data);
-  console.log('u1111', offers);
-  console.log('u1111', destination);
-  console.log('allOffers Temp', allOffers);
-  console.log('currentOffers Temp', currentOffers);
-  console.log('selectedOffers Temp', selectedOffers);
-  console.log('allDestinations Temp', allDestinations);
-  console.log('currentDestination Temp', currentDestination);
+  const {basePrice, type, dateFrom, dateTo, offers, destination, allOffers, allDestinations} = data;
+
+  const currentOffers = allOffers.find((offer) => offer.type === type);
+  const selectedOffers = allOffers.find((offer) => offer.type === type).offers.filter((offer) => offers.includes(offer.id));
+  const currentDestination = allDestinations.find((destinations) => (destinations.id === destination));
 
   const dateFromSlashes = dateFrom !== null
     ? slashesFullDate(dateFrom)
@@ -174,9 +170,9 @@ const createEventEditTemplate = (data) => {
 
 export default class EditPointView extends AbstractStatefulView {
 
-  constructor(point = BLANK_POINT, allOffers, currentOffers, selectedOffers, allDestinations, currentDestination) {
+  constructor(point = BLANK_POINT, allOffers, allDestinations) {
     super();
-    this._state = EditPointView.parsePointToState(point, allOffers, currentOffers, selectedOffers, allDestinations, currentDestination);
+    this._state = EditPointView.parsePointToState(point, allOffers, allDestinations);
     this.#setInnerHandlers();
   }
 
@@ -219,15 +215,14 @@ export default class EditPointView extends AbstractStatefulView {
   #clickHandler = (evt) => {
     evt.preventDefault();
 
-    this._callback.click(EditPointView.parseStateToPoint(this._state)); //EditPointView.parseStateToPoint(this._state)
+    this._callback.click(EditPointView.parseStateToPoint(this._state));
   };
 
   #changeTypePoint = (evt) => {
     if (evt.target.classList.contains('event__type-input')) {
       this.updateElement({
         type: evt.target.value,
-        offer: [],
-        currentOffers: this._state.allOffers.find((offers) => offers.type === evt.target.value)
+        offers: [],
       });
     }
   };
@@ -244,8 +239,9 @@ export default class EditPointView extends AbstractStatefulView {
   };
 
   #changeDestination = (evt) => {
+    const currentDestination = this._state.allDestinations.find((destination) => destination.name === evt.target.value);
     this.updateElement({
-      currentDestination: this._state.allDestinations.find((destination) => destination.name === evt.target.value),
+      destination: currentDestination.id
     });
   };
 
@@ -273,23 +269,17 @@ export default class EditPointView extends AbstractStatefulView {
     );
   };
 
-  static parsePointToState = (point, allOffers, currentOffers, selectedOffers, allDestinations, currentDestination) => ({
+  static parsePointToState = (point, allOffers, allDestinations) => ({
     ...point,
     allOffers: allOffers,
-    currentOffers: currentOffers,
-    selectedOffers: selectedOffers,
     allDestinations: allDestinations,
-    currentDestination: currentDestination
   });
 
   static parseStateToPoint = (state) => {
     const point = {...state};
 
     delete point.allOffers;
-    delete point.currentOffers;
-    delete point.selectedOffers;
     delete point.allDestinations;
-    delete point.currentDestination;
 
     return point;
   };

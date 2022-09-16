@@ -1,7 +1,4 @@
-import { getRandomInteger } from '../utils/common.js'; //, getRandomArrayElement
-// import { DESTINATION_NAMES, DESTINATION_DESCRIPTIONS } from './const.js';
-// import { getRandomInteger } from '../utils/common.js';
-// import { DESTINATION_NAMES } from './const.js';
+import { getRandomInteger } from '../utils/common.js';
 
 export const destinationsData = [
   {
@@ -50,27 +47,3 @@ export const destinationsData = [
     ]
   },
 ];
-
-// export const generateDestination = () => ({
-//   id: getRandomInteger(1, 5),
-//   description: getRandomArrayElement(DESTINATION_DESCRIPTIONS),
-//   name: getRandomArrayElement(DESTINATION_NAMES),
-//   pictures: [
-//     {
-//       src: `http://picsum.photos/248/152?r=${getRandomInteger(0, 100)}`,
-//       description: getRandomArrayElement(DESTINATION_DESCRIPTIONS)
-//     },
-//     {
-//       src: `http://picsum.photos/248/152?r=${getRandomInteger(0, 100)}`,
-//       description: getRandomArrayElement(DESTINATION_DESCRIPTIONS)
-//     },
-//     {
-//       src: `http://picsum.photos/248/152?r=${getRandomInteger(0, 100)}`,
-//       description: getRandomArrayElement(DESTINATION_DESCRIPTIONS)
-//     },
-//     {
-//       src: `http://picsum.photos/248/152?r=${getRandomInteger(0, 100)}`,
-//       description: getRandomArrayElement(DESTINATION_DESCRIPTIONS)
-//     },
-//   ]
-// });

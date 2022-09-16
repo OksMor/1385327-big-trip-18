@@ -11,9 +11,11 @@ const createOffersTemplate = (selectedOffers) => selectedOffers.map((offer) =>
   `
 ).join('');
 
-const createCardTemplate = (point, selectedOffers, currentDestination) => {
+const createCardTemplate = (point, allOffers, allDestinations) => {
   const {basePrice, type, dateFrom, dateTo, isFavorite} = point;
-  const {name} = currentDestination;
+
+  const currentDestination = allDestinations.find((destination) => (destination.id === point.destination));
+  const selectedOffers = allOffers.find((offer) => offer.type === point.type).offers.filter((offer) => point.offers.includes(offer.id));
 
   const dateHum = dateFrom !== null ? humanizeDate(dateFrom) : '';
   const dateYMD = dateFrom !== null ? yearMonthDate(dateFrom) : '';
@@ -33,7 +35,7 @@ const createCardTemplate = (point, selectedOffers, currentDestination) => {
       <div class="event__type">
         <img class="event__type-icon" width="42" height="42" src="img/icons/${type}.png" alt="Event type icon">
       </div>
-      <h3 class="event__title">${type} ${name}</h3>
+      <h3 class="event__title">${type} ${currentDestination.name}</h3>
       <div class="event__schedule">
         <p class="event__time">
           <time class="event__start-time" datetime="${dateFromFull}">${dateFromHM}</time>
@@ -65,18 +67,18 @@ const createCardTemplate = (point, selectedOffers, currentDestination) => {
 
 export default class TripItemCardView extends AbstractView {
   #point = null;
-  #selectedOffers = null;
-  #currentDestination = null;
+  #allOffers = null;
+  #allDestinations = null;
 
-  constructor(point, selectedOffers, currentDestination) {
+  constructor(point, allOffers, allDestinations) {
     super();
     this.#point = point;
-    this.#selectedOffers = selectedOffers;
-    this.#currentDestination = currentDestination;
+    this.#allOffers = allOffers;
+    this.#allDestinations = allDestinations;
   }
 
   get template() {
-    return createCardTemplate(this.#point, this.#selectedOffers, this.#currentDestination);
+    return createCardTemplate(this.#point, this.#allOffers, this.#allDestinations);
   }
 
   setEditClickHandler = (callback) => {

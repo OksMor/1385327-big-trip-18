@@ -30,15 +30,10 @@ export default class PointPresenter {
     const prevPointEditComponent = this.#pointEditComponent;
 
     const allOffers = pointsModel.offersData;
-    const currentOffers = pointsModel.getCurrentOffers(this.#point);
-    const selectedOffers = pointsModel.getSelectedOffers(this.#point);
-
     const allDestinations = pointsModel.destinationsData;
-    const currentDestination = pointsModel.getCurrentDestination(this.#point);
 
-
-    this.#pointComponent = new TripItemCardView(point, selectedOffers, currentDestination);
-    this.#pointEditComponent = new EditPointView(point, allOffers, currentOffers, selectedOffers, allDestinations, currentDestination);
+    this.#pointComponent = new TripItemCardView(point, allOffers, allDestinations);
+    this.#pointEditComponent = new EditPointView(point, allOffers, allDestinations);
 
     this.#pointComponent.setEditClickHandler(this.#handleEditClick);
     this.#pointComponent.setFavoriteClickHandler(this.#handleFavoriteClick);

@@ -36,7 +36,7 @@ export default class MainPresenter {
   init = () => {
     this.#tripPoints = [...this.#pointsModel.points];
     this.#sourcedEvents = [...this.#pointsModel.points];
-    console.log(this.#tripPoints);
+    // console.log(this.#tripPoints);
     this.#renderEvent();
   };
 
@@ -46,7 +46,7 @@ export default class MainPresenter {
 
   #handlePointChange = (updatedPoint) => {
     this.#tripPoints = updateItem(this.#tripPoints, updatedPoint);
-    this.#pointPresenter.get(updatedPoint.id).init(updatedPoint, this.#pointsModel);//this.#pointsModel
+    this.#pointPresenter.get(updatedPoint.id).init(updatedPoint, this.#pointsModel);
   };
 
   #renderNoPoints = () => {
@@ -93,8 +93,8 @@ export default class MainPresenter {
   };
 
   #renderPoint = (point) => {
-    const pointPresenter = new PointPresenter(this.#tripListComponent.element, this.#handlePointChange, this.#handleModeChange); console.log('iiiiiiiiiiiiiii');
-    pointPresenter.init(point, this.#pointsModel); console.log('uuuuuuuuuuuuuuuu');
+    const pointPresenter = new PointPresenter(this.#tripListComponent.element, this.#handlePointChange, this.#handleModeChange);
+    pointPresenter.init(point, this.#pointsModel);
     this.#pointPresenter.set(point.id, pointPresenter);
   };
 
