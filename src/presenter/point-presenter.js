@@ -23,14 +23,17 @@ export default class PointPresenter {
     this.#changeMode = changeMode;
   }
 
-  init = (point) => {
+  init = (point, pointsModel) => {
     this.#point = point;
 
     const prevPointComponent = this.#pointComponent;
     const prevPointEditComponent = this.#pointEditComponent;
 
-    this.#pointComponent = new TripItemCardView(point);
-    this.#pointEditComponent = new EditPointView(point);
+    const allOffers = pointsModel.offersData;
+    const allDestinations = pointsModel.destinationsData;
+
+    this.#pointComponent = new TripItemCardView(point, allOffers, allDestinations);
+    this.#pointEditComponent = new EditPointView(point, allOffers, allDestinations);
 
     this.#pointComponent.setEditClickHandler(this.#handleEditClick);
     this.#pointComponent.setFavoriteClickHandler(this.#handleFavoriteClick);
@@ -62,6 +65,7 @@ export default class PointPresenter {
 
   resetView = () => {
     if (this.#mode !== Mode.DEFAULT) {
+      this.#pointEditComponent.reset(this.#point); // this.#offer, this.#destinations
       this.#replaceFormToCard();
     }
   };
@@ -82,11 +86,13 @@ export default class PointPresenter {
   #onEscKeyDown = (evt) => {
     if (evt.key === 'Escape' || evt.key === 'Esc') {
       evt.preventDefault();
+      this.#pointEditComponent.reset(this.#point); // this.#offer, this.#destinations
       this.#replaceFormToCard();
     }
   };
 
   #handleEditClick = () => {
+    this.#pointEditComponent.reset(this.#point);
     this.#replaceCardToForm();
   };
 
@@ -96,6 +102,7 @@ export default class PointPresenter {
   };
 
   #handleClick = () => {
+    this.#pointEditComponent.reset(this.#point); // this.#offer, this.#destinations
     this.#replaceFormToCard();
   };
 
