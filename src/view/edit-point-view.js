@@ -2,6 +2,8 @@ import AbstractStatefulView from '../framework/view/abstract-stateful-view.js';
 import { slashesFullDate } from '../utils/trip-utils.js';
 import { getNumberFromString } from '../utils/common.js';
 import { POINT_TYPES } from '../mock/const.js';
+// import { offersData } from '../mock/offer.js';
+// import { destinationsData } from '../mock/destination.js';
 
 import flatpickr from 'flatpickr';
 import 'flatpickr/dist/flatpickr.min.css';
@@ -79,7 +81,7 @@ const createOffersTemplate = (currentOffers, selectedOffers) => {
 const createEventEditTemplate = (data) => {
   const {basePrice, type, dateFrom, dateTo, offers, destination, allOffers, allDestinations} = data;
 
-  const currentOffers = allOffers.find((offer) => offer.type === type);
+  const currentOffers = allOffers.find((offer) => offer.type === type); // find - filter
   const selectedOffers = allOffers.find((offer) => offer.type === type).offers.filter((offer) => offers.includes(offer.id));
   const currentDestination = allDestinations.find((destinations) => (destinations.id === destination));
 
@@ -198,21 +200,22 @@ export default class EditPointView extends AbstractStatefulView {
 
   reset = (point) => {
     this.updateElement(
-      EditPointView.parseStateToPoint(point) //parsePointToState
+      EditPointView.parseStateToPoint(point) //parsePointToState - parseStateToPoint
     );
   };
 
   _restoreHandlers = () => {
     this.#setInnerHandlers();
-    this.setFormSubmitHandler(this._callback.formSubmit);
+    this.setFormSubmitClickHandler(this._callback.formSubmit);
     this.setClickHandler(this._callback.click);
+    this.setFormDeleteClickHandler(this._callback.formDelete);
     this.#setFromDatepicker();
     this.#setToDatepicker();
   };
 
-  setFormSubmitHandler = (callback) => {
+  setFormSubmitClickHandler = (callback) => {
     this._callback.formSubmit = callback;
-    this.element.querySelector('.event__save-btn').addEventListener('submit', this.#formSubmitHandler);
+    this.element.querySelector('form').addEventListener('submit', this.#formSubmitHandler); //.event__save-btn
   };
 
   #formSubmitHandler = (evt) => {
@@ -230,6 +233,16 @@ export default class EditPointView extends AbstractStatefulView {
     evt.preventDefault();
 
     this._callback.click(EditPointView.parseStateToPoint(this._state));
+  };
+
+  setFormDeleteClickHandler = (callback) => {
+    this._callback.formDelete = callback;
+    this.element.querySelector('.event__reset-btn').addEventListener('click', this.#formDeleteHandler);
+  };
+
+  #formDeleteHandler = (evt) => {
+    evt.preventDefault();
+    this._callback.formDelete(EditPointView.parseStateToPoint(this._state));
   };
 
   #changeTypePoint = (evt) => {

@@ -1,7 +1,7 @@
 import { remove, render, replace } from '../framework/render.js';
 import EditPointView from '../view/edit-point-view.js';
 import TripItemCardView from '../view/trip-item-card-view.js';
-import { Mode } from '../mock/const.js';
+import { Mode, UserAction, UpdateType } from '../mock/const.js';
 
 export default class PointPresenter {
   #tripContainer = null;
@@ -13,6 +13,8 @@ export default class PointPresenter {
   #changeMode = null;
 
   #point = null;
+  #allOffers = null;
+  #allDestinations = null;
 
   #mode = Mode.DEFAULT;
 
@@ -23,22 +25,22 @@ export default class PointPresenter {
     this.#changeMode = changeMode;
   }
 
-  init = (point, pointsModel) => {
+  init = (point, offersData, destinationsData) => {
     this.#point = point;
+    this.#allOffers = offersData;
+    this.#allDestinations = destinationsData;
 
     const prevPointComponent = this.#pointComponent;
     const prevPointEditComponent = this.#pointEditComponent;
 
-    const allOffers = pointsModel.offersData;
-    const allDestinations = pointsModel.destinationsData;
-
-    this.#pointComponent = new TripItemCardView(point, allOffers, allDestinations);
-    this.#pointEditComponent = new EditPointView(point, allOffers, allDestinations);
+    this.#pointComponent = new TripItemCardView(point, this.#allOffers, this.#allDestinations);
+    this.#pointEditComponent = new EditPointView(point, this.#allOffers, this.#allDestinations);
 
     this.#pointComponent.setEditClickHandler(this.#handleEditClick);
     this.#pointComponent.setFavoriteClickHandler(this.#handleFavoriteClick);
 
-    this.#pointEditComponent.setFormSubmitHandler(this.#handleFormSubmit);
+    this.#pointEditComponent.setFormSubmitClickHandler(this.#handleFormSubmit);
+    this.#pointEditComponent.setFormDeleteClickHandler(this.#handleFormDelete);
     this.#pointEditComponent.setClickHandler(this.#handleClick);
 
     if (prevPointComponent === null || prevPointEditComponent === null) {
@@ -97,7 +99,22 @@ export default class PointPresenter {
   };
 
   #handleFormSubmit = (point) => {
-    this.#changeData(point);
+    // this.#changeData(point);
+    const updatePoint = {};
+    Object.assign(updatePoint, point);
+    delete updatePoint.type;
+    const currentPoint = {};
+    Object.assign(currentPoint, this.#point);
+    delete currentPoint.type;
+
+    const isMinorUpdate = JSON.stringify(updatePoint) !== JSON.stringify(currentPoint);
+
+    this.#changeData(
+      UserAction.UPDATE_POINT,
+      // UpdateType.MINOR,
+      isMinorUpdate ? UpdateType.MINOR : UpdateType.PATCH,
+      point,
+    );
     this.#replaceFormToCard();
   };
 
@@ -106,7 +123,20 @@ export default class PointPresenter {
     this.#replaceFormToCard();
   };
 
+  #handleFormDelete = (point) => {
+    this.#changeData(
+      UserAction.DELETE_POINT,
+      UpdateType.MINOR,
+      point,
+    );
+    document.removeEventListener('keydown', this.#onEscKeyDown);
+  };
+
   #handleFavoriteClick = () => {
-    this.#changeData({...this.#point, isFavorite: !this.#point.isFavorite});
+    // this.#changeData({...this.#point, isFavorite: !this.#point.isFavorite});
+    this.#changeData(
+      UserAction.UPDATE_POINT,
+      UpdateType.MINOR,
+      {...this.#point, isFavorite: !this.#point.isFavorite});
   };
 }

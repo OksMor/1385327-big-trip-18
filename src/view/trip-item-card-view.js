@@ -1,5 +1,7 @@
 import AbstractView from '../framework/view/abstract-view.js';
 import { humanizeDate, hoursMinutesDate, yearMonthDate, fullDate, eventDuration } from '../utils/trip-utils.js';
+// import { offersData } from '../mock/offer.js';
+// import { destinationsData } from '../mock/destination.js';
 
 const createOffersTemplate = (selectedOffers) => selectedOffers.map((offer) =>
   `
@@ -27,6 +29,7 @@ const createCardTemplate = (point, allOffers, allDestinations) => {
   const favoriteClassName = isFavorite ? 'event__favorite-btn--active' : '';
 
   const offersTemplate = createOffersTemplate(selectedOffers);
+  // const offersTemplate = selectedOffers.length !== 0 ? createOffersTemplate(selectedOffers) : '';
 
   return (
     `<li class="trip-events__item">
