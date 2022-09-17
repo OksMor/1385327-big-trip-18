@@ -3,6 +3,10 @@ import { slashesFullDate } from '../utils/trip-utils.js';
 import { getNumberFromString } from '../utils/common.js';
 import { POINT_TYPES } from '../mock/const.js';
 
+import flatpickr from 'flatpickr';
+import 'flatpickr/dist/flatpickr.min.css';
+import 'flatpickr/dist/themes/material_blue.css';
+
 const BLANK_POINT = {
   basePrice: 0,
   dateFrom: null,
@@ -169,31 +173,41 @@ const createEventEditTemplate = (data) => {
 };
 
 export default class EditPointView extends AbstractStatefulView {
+  #datepicker = null;
 
   constructor(point = BLANK_POINT, allOffers, allDestinations) {
     super();
     this._state = EditPointView.parsePointToState(point, allOffers, allDestinations);
     this.#setInnerHandlers();
+    this.#setFromDatepicker();
+    this.#setToDatepicker();
   }
 
   get template() {
     return createEventEditTemplate(this._state);
   }
 
-  #setInnerHandlers = () => {
-    this.element.querySelector('.event__type-list').addEventListener('click', this.#changeTypePoint);
-    this.element.querySelector('.event__available-offers').addEventListener('click', this.#changeOffer);
-    this.element.querySelector('.event__input--destination').addEventListener( 'change', this.#changeDestination);
+  removeElement = () => {
+    super.removeElement();
 
-    this.element.querySelector('#event-start-time-1').addEventListener('input', this.#dateFromInputHandler);
-    this.element.querySelector('#event-end-time-1').addEventListener('input', this.#dateToInputHandler);
-    this.element.querySelector('#event-price-1').addEventListener('input', this.#priceInputHandler);
+    if (this.#datepicker) {
+      this.#datepicker.destroy();
+      this.#datepicker = null;
+    }
+  };
+
+  reset = (point) => {
+    this.updateElement(
+      EditPointView.parseStateToPoint(point) //parsePointToState
+    );
   };
 
   _restoreHandlers = () => {
     this.#setInnerHandlers();
     this.setFormSubmitHandler(this._callback.formSubmit);
     this.setClickHandler(this._callback.click);
+    this.#setFromDatepicker();
+    this.#setToDatepicker();
   };
 
   setFormSubmitHandler = (callback) => {
@@ -245,15 +259,21 @@ export default class EditPointView extends AbstractStatefulView {
     });
   };
 
-  #dateFromInputHandler = (evt) => {
-    this._setState({
-      dateFrom: evt.target.value
+  #dateStartHandler = ([userDateStart]) => {
+    if (userDateStart > this._state.dateTo) {
+      this.updateElement({
+        dateFrom: userDateStart,
+        dateTo: userDateStart,
+      });
+    }
+    this.updateElement({
+      dateFrom: userDateStart,
     });
   };
 
-  #dateToInputHandler = (evt) => {
-    this._setState({
-      dateTo: evt.target.value
+  #dateEndHandler = ([userDateEnd]) => {
+    this.updateElement({
+      dateTo: userDateEnd,
     });
   };
 
@@ -263,10 +283,44 @@ export default class EditPointView extends AbstractStatefulView {
     });
   };
 
-  reset = (point) => {
-    this.updateElement(
-      EditPointView.parseStateToPoint(point) //parsePointToState
+  #setFromDatepicker = () => {
+    const dateStartInput = this.element.querySelector('input[name="event-start-time"]');
+    this.#datepicker = flatpickr(
+      dateStartInput,
+      {
+        enableTime: true,
+        'time_24hr': true,
+        defaultDate: dateStartInput.value,
+        dateFormat: 'd/m/y H:i',
+        onClose: this.#dateStartHandler,
+      },
     );
+  };
+
+  #setToDatepicker = () => {
+    const dateStartInput = this.element.querySelector('input[name="event-start-time"]');
+    const dateEndInput = this.element.querySelector('input[name="event-end-time"]');
+    this.#datepicker = flatpickr(
+      dateEndInput,
+      {
+        enableTime: true,
+        'time_24hr': true,
+        defaultDate: dateEndInput.value,
+        dateFormat: 'd/m/y H:i',
+        minDate: dateStartInput.value,
+        onClose: this.#dateEndHandler,
+      },
+    );
+  };
+
+  #setInnerHandlers = () => {
+    this.element.querySelector('.event__type-list').addEventListener('click', this.#changeTypePoint);
+    this.element.querySelector('.event__available-offers').addEventListener('click', this.#changeOffer);
+    this.element.querySelector('.event__input--destination').addEventListener( 'change', this.#changeDestination);
+
+    // this.element.querySelector('#event-start-time-1').addEventListener('input', this.#dateFromInputHandler);
+    // this.element.querySelector('#event-end-time-1').addEventListener('input', this.#dateToInputHandler);
+    this.element.querySelector('#event-price-1').addEventListener('input', this.#priceInputHandler);
   };
 
   static parsePointToState = (point, allOffers, allDestinations) => ({
