@@ -7,76 +7,75 @@ import PointPresenter from './point-presenter.js';
 
 import { render, remove } from '../framework/render.js';
 import { sortByDay, sortByPrice, sortByTime } from '../utils/trip-utils.js';
-import { SortType, UserAction, UpdateType } from '../mock/const.js';
+import { filter } from '../utils/filter.js';
+import { generateTripInfo } from '../mock/info.js';
+import { FilterType, SortType, UserAction, UpdateType } from '../mock/const.js';
 
 export default class MainPresenter {
   #infoContainer = null;
   #tripContainer = null;
   #pointsModel = null;
+  #filterModel = null;
   #tripSortComponent = null;
 
   #tripListComponent = new TripEventsListView();
-  // #headerInfoComponent = new HeaderInfoView();
   #headerInfoComponent = null;
-  #noPointComponent = new NoPointView();
-
-  // #tripPoints = [];
-  // #sourcedEvents = [];
+  #noPointComponent = null;
 
   #pointPresenter = new Map();
   #currentSortType = SortType.DAY;
+  #filterType = FilterType.EVERYTHING;
 
-  constructor( infoContainer, tripContainer, pointsModel ) {
+  constructor( infoContainer, tripContainer, pointsModel, filterModel ) {
     this.#infoContainer = infoContainer;
     this.#tripContainer = tripContainer;
     this.#pointsModel = pointsModel;
+    this.#filterModel = filterModel;
     this.#pointsModel.addObserver(this.#handleModelEvent);
+    this.#filterModel.addObserver(this.#handleModelEvent);
   }
 
   get points() {
+    this.#filterType = this.#filterModel.filter;
+    const points = this.#pointsModel.points;
+    const filteredPoints = filter[this.#filterType](points);
+
     switch (this.#currentSortType) {
       case SortType.TIME:
-        return [...this.#pointsModel.points].sort(sortByTime);
+        return filteredPoints.sort(sortByTime);
 
       case SortType.PRICE:
-        return [...this.#pointsModel.points].sort(sortByPrice);
+        return filteredPoints.sort(sortByPrice);
 
       default:
-        return [...this.#pointsModel.points].sort(sortByDay);
+        return filteredPoints.sort(sortByDay);
     }
-
-    // return this.#pointsModel.points;
   }
 
   init = () => {
     // console.log(this.#tripPoints);
-    this.#renderContent(); //#renderEvent
+    this.#renderContent();
   };
 
   #renderHeaderInfo = () => {
-    this.#headerInfoComponent = new HeaderInfoView();
+    const tripInfo = generateTripInfo(this.#pointsModel);
+    this.#headerInfoComponent = new HeaderInfoView(tripInfo);
     render( this.#headerInfoComponent, this.#infoContainer, 'afterbegin' );
   };
 
-  // #renderFilter = () => {
-  //   const tripMainElement = document.querySelector( '.trip-main' );
-  //   const tripFiltersElement = tripMainElement.querySelector( '.trip-controls__filters' );
-  //   const filters = generateFilter(this.#pointsModel.points);
-  //   render( new HeaderFiltersView(filters), tripFiltersElement );
-  // };
-
   #renderNoPoints = () => {
+    this.#noPointComponent = new NoPointView(this.#filterType);
     render( this.#noPointComponent, this.#tripContainer);
   };
 
-  #renderSort = (sortType = SortType.DAY) => {
+  #renderSort = () => {
     if (this.#tripSortComponent instanceof TripSortView) {
       remove(this.#tripSortComponent);
     }
 
-    this.#tripSortComponent = new TripSortView(sortType);
-    render( this.#tripSortComponent, this.#tripContainer );
+    this.#tripSortComponent = new TripSortView(this.#currentSortType);
     this.#tripSortComponent.setSortTypeChangeHandler(this.#handleSortTypeChange);
+    render( this.#tripSortComponent, this.#tripContainer );
   };
 
   #handleViewAction = (actionType, updateType, update) => {
@@ -126,7 +125,7 @@ export default class MainPresenter {
 
   #renderPoint = (point) => {
     const pointPresenter = new PointPresenter(this.#tripListComponent.element, this.#handleViewAction, this.#handleModeChange);
-    pointPresenter.init(point, this.#pointsModel.offersData, this.#pointsModel.destinationsData); // this.#pointsModel
+    pointPresenter.init(point, this.#pointsModel.offersData, this.#pointsModel.destinationsData);
     this.#pointPresenter.set(point.id, pointPresenter);
   };
 
@@ -141,9 +140,8 @@ export default class MainPresenter {
       this.#renderNoPoints();
     } else {
       this.#renderHeaderInfo();
-      // this.#renderFilter();
-
       this.#renderSort();
+
       render( this.#tripListComponent, this.#tripContainer );
 
       this.#renderPoints();
@@ -157,7 +155,6 @@ export default class MainPresenter {
 
     remove(this.#tripSortComponent);
     remove(this.#headerInfoComponent);
-    // remove(this.#filterComponent);
 
     if (this.#noPointComponent){
       remove(this.#noPointComponent);

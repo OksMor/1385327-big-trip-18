@@ -46,4 +46,10 @@ export const destinationsData = [
       }
     ]
   },
+  {
+    id: 4, // Если информация о пункте назначения отсутствует .... какая? ждем данные с серва!
+    name: 'Madrid',
+    description: '',
+    pictures: []
+  },
 ];

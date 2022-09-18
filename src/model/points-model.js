@@ -4,7 +4,7 @@ import { destinationsData } from '../mock/destination.js';
 import { offersData } from '../mock/offer.js';
 
 export default class PointsModel extends Observable{
-  #points = Array.from({length: 3}, generatePoint);
+  #points = Array.from({length: 5}, generatePoint);
   #destinationsData = destinationsData;
   #offersData = offersData;
 

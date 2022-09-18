@@ -67,6 +67,25 @@ const sortByTime = (a, b) => {
   return fullMinutesB - fullMinutesA;
 };
 
+const getTripInfo = (pointsModel) => {
+  const pointsSequence = pointsModel.points.slice();
+  let tripCost = 0;
+  pointsSequence.sort((a, b) => dayjs(a.dateFrom).isAfter(b.dateFrom) ? 1 : -1).forEach((point) => {
+    pointsModel.offersData.forEach((offersByType) => {
+      if (offersByType.type === point.type) {
+        offersByType.offers.forEach((offerByType) => {
+          if (point.offers.includes(offerByType.id)) {
+            tripCost += Number(offerByType.price);
+          }
+        });
+      }
+    });
+    tripCost += Math.abs(Number(point.basePrice));
+  });
+
+  return { pointsSequence, tripCost };
+};
+
 export {
   humanizeDate,
   hoursMinutesDate,
@@ -80,4 +99,5 @@ export {
   sortByDay,
   sortByPrice,
   sortByTime,
+  getTripInfo,
 };

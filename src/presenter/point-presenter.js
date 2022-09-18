@@ -67,7 +67,7 @@ export default class PointPresenter {
 
   resetView = () => {
     if (this.#mode !== Mode.DEFAULT) {
-      this.#pointEditComponent.reset(this.#point); // this.#offer, this.#destinations
+      this.#pointEditComponent.reset(this.#point);
       this.#replaceFormToCard();
     }
   };
@@ -88,7 +88,7 @@ export default class PointPresenter {
   #onEscKeyDown = (evt) => {
     if (evt.key === 'Escape' || evt.key === 'Esc') {
       evt.preventDefault();
-      this.#pointEditComponent.reset(this.#point); // this.#offer, this.#destinations
+      this.#pointEditComponent.reset(this.#point);
       this.#replaceFormToCard();
     }
   };
@@ -99,19 +99,17 @@ export default class PointPresenter {
   };
 
   #handleFormSubmit = (point) => {
-    // this.#changeData(point);
-    const updatePoint = {};
-    Object.assign(updatePoint, point);
+
+    const updatePoint = {...point};
     delete updatePoint.type;
-    const currentPoint = {};
-    Object.assign(currentPoint, this.#point);
+
+    const currentPoint = {...this.#point};
     delete currentPoint.type;
 
     const isMinorUpdate = JSON.stringify(updatePoint) !== JSON.stringify(currentPoint);
 
     this.#changeData(
       UserAction.UPDATE_POINT,
-      // UpdateType.MINOR,
       isMinorUpdate ? UpdateType.MINOR : UpdateType.PATCH,
       point,
     );
@@ -119,7 +117,7 @@ export default class PointPresenter {
   };
 
   #handleClick = () => {
-    this.#pointEditComponent.reset(this.#point); // this.#offer, this.#destinations
+    this.#pointEditComponent.reset(this.#point);
     this.#replaceFormToCard();
   };
 
@@ -133,7 +131,6 @@ export default class PointPresenter {
   };
 
   #handleFavoriteClick = () => {
-    // this.#changeData({...this.#point, isFavorite: !this.#point.isFavorite});
     this.#changeData(
       UserAction.UPDATE_POINT,
       UpdateType.MINOR,
