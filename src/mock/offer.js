@@ -34,31 +34,31 @@ export const offersData = [
   {
     type: 'bus',
     offers: [
-      {
-        id: 1,
-        title: 'Upgrade bus 1',
-        price: getRandomInteger(0, 200),
-      },
-      {
-        id: 2,
-        title: 'Upgrade bus 2',
-        price: getRandomInteger(0, 200),
-      },
-      {
-        id: 3,
-        title: 'Upgrade bus 3',
-        price: getRandomInteger(0, 200),
-      },
-      {
-        id: 4,
-        title: 'Upgrade bus 4',
-        price: getRandomInteger(0, 200),
-      },
-      {
-        id: 5,
-        title: 'Upgrade bus 5',
-        price: getRandomInteger(0, 200),
-      },
+      // {
+      //   id: 1,
+      //   title: 'Upgrade bus 1',
+      //   price: getRandomInteger(0, 200),
+      // },
+      // {
+      //   id: 2,
+      //   title: 'Upgrade bus 2',
+      //   price: getRandomInteger(0, 200),
+      // },
+      // {
+      //   id: 3,
+      //   title: 'Upgrade bus 3',
+      //   price: getRandomInteger(0, 200),
+      // },
+      // {
+      //   id: 4,
+      //   title: 'Upgrade bus 4',
+      //   price: getRandomInteger(0, 200),
+      // },
+      // {
+      //   id: 5,
+      //   title: 'Upgrade bus 5',
+      //   price: getRandomInteger(0, 200),
+      // },
     ]
   },
   {

@@ -1,15 +1,19 @@
 import AbstractView from '../framework/view/abstract-view.js';
 import { humanizeDate, hoursMinutesDate, yearMonthDate, fullDate, eventDuration } from '../utils/trip-utils.js';
 
-const createOffersTemplate = (selectedOffers) => selectedOffers.map((offer) =>
-  `
-    <li class="event__offer">
-      <span class="event__offer-title">${offer.title}</span>
-        &plus;&euro;&nbsp;
-      <span class="event__offer-price">${offer.price}</span>
-    </li>
-  `
-).join('');
+const createOffersTemplate = (selectedOffers) => (
+  `<ul class="event__selected-offers">
+  ${selectedOffers.map((offer) =>
+    `
+      <li class="event__offer">
+        <span class="event__offer-title">${offer.title}</span>
+          &plus;&euro;&nbsp;
+        <span class="event__offer-price">${offer.price}</span>
+      </li>
+    `
+  ).join('')}
+  </ul>`
+);
 
 const createCardTemplate = (point, allOffers, allDestinations) => {
   const {basePrice, type, dateFrom, dateTo, isFavorite} = point;
@@ -26,7 +30,7 @@ const createCardTemplate = (point, allOffers, allDestinations) => {
 
   const favoriteClassName = isFavorite ? 'event__favorite-btn--active' : '';
 
-  const offersTemplate = createOffersTemplate(selectedOffers);
+  const offersTemplate = selectedOffers.length !== 0 ? createOffersTemplate(selectedOffers) : '';
 
   return (
     `<li class="trip-events__item">
@@ -48,9 +52,7 @@ const createCardTemplate = (point, allOffers, allDestinations) => {
         &euro;&nbsp;<span class="event__price-value">${basePrice}</span>
       </p>
       <h4 class="visually-hidden">Offers:</h4>
-      <ul class="event__selected-offers">
         ${offersTemplate}
-      </ul>
       <button class="event__favorite-btn ${favoriteClassName}" type="button">
         <span class="visually-hidden">Add to favorite</span>
         <svg class="event__favorite-icon" width="28" height="28" viewBox="0 0 28 28">

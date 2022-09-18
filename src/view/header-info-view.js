@@ -1,22 +1,29 @@
 import AbstractView from '../framework/view/abstract-view.js';
+import { humanizeDate } from '../utils/trip-utils.js';
 
-const createInfoTemplate = () => (
+const createInfoTemplate = (tripInfo) => (
   `<section class="trip-main__trip-info  trip-info">
     <div class="trip-info__main">
-      <h1 class="trip-info__title">Amsterdam &mdash; Chamonix &mdash; Geneva</h1>
+      <h1 class="trip-info__title">${tripInfo.tripTitle}</h1>
 
-      <p class="trip-info__dates">Mar 18&nbsp;&mdash;&nbsp;20</p>
+      <p class="trip-info__dates">${humanizeDate(tripInfo.tripDateFrom)} — ${humanizeDate(tripInfo.tripDateTo)}</p>
     </div>
 
     <p class="trip-info__cost">
-      Total: &euro;&nbsp;<span class="trip-info__cost-value">1230</span>
+      Total: &euro;&nbsp;<span class="trip-info__cost-value">${tripInfo.tripCost}</span>
     </p>
   </section>`
 );
 
-export default class HeaderInfoView extends AbstractView {
+export default class HeaderInfoView extends AbstractView { // ДОРАБОТАТЬ если начало и конец в одном месяце, то указываем только в первом
+  #tripInfo = null;
+
+  constructor(tripInfo) {
+    super();
+    this.#tripInfo = tripInfo;
+  }
 
   get template() {
-    return createInfoTemplate();
+    return createInfoTemplate(this.#tripInfo);
   }
 }
