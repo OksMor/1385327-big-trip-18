@@ -1,24 +1,12 @@
 import AbstractStatefulView from '../framework/view/abstract-stateful-view.js';
 import { slashesFullDate } from '../utils/trip-utils.js';
 import { getNumberFromString } from '../utils/common.js';
-import { POINT_TYPES } from '../mock/const.js';
+import { POINT_TYPES, BLANK_POINT } from '../mock/const.js';
 
+import he from 'he';
 import flatpickr from 'flatpickr';
 import 'flatpickr/dist/flatpickr.min.css';
 import 'flatpickr/dist/themes/material_blue.css';
-
-const BLANK_POINT = {
-  basePrice: 0,
-  dateFrom: null,
-  dateTo: null,
-  destination: {
-    description: '',
-    name: '',
-    pictures: []
-  },
-  offers: [],
-  type: '',
-};
 
 const createEventTypesTemplate = (types, eventType) => (
   `
@@ -42,10 +30,17 @@ const createDestinationsTemplate = (currentDestination, allDestinations, type) =
   const upperCaseValue = type[0].toUpperCase() + type.substring(1);
   return (
     `
-      <label class="event__label  event__type-output" for="event-destination-1">
-        ${upperCaseValue}
+      <label class="event__label  event__type-output"
+        for="event-destination-1">
+          ${upperCaseValue}
       </label>
-      <input class="event__input  event__input--destination" id="event-destination-1" type="text" name="event-destination" value="${currentDestination.name}" list="destination-list-1">
+      <input class="event__input  event__input--destination"
+        id="event-destination-1"
+        type="text"
+        name="event-destination"
+        value="${currentDestination !== undefined ? he.encode(currentDestination.name) : ''}"
+        required
+        list="destination-list-1">
       <datalist id="destination-list-1">
         ${destinationsOptions}
       </datalist>
@@ -108,18 +103,18 @@ const createEventEditTemplate = (data) => {
     ? slashesFullDate(dateTo)
     : '';
 
-  const buttonEditTemplate = Object.keys(data).length !== 0
+  const buttonEditTemplate = data
     ? `<button class="event__rollup-btn" type="button">
         <span class="visually-hidden">Open event</span>
       </button>`
-    : '';
+    : ''; //  пока кнопку оставлю (data.id)
 
   const eventTypesTemplate = createEventTypesTemplate(POINT_TYPES, type);
 
   const offersTemplate = createOffersTemplate(currentOffers, selectedOffers);
 
   const destinationsTemplate = createDestinationsTemplate(currentDestination, allDestinations, type);
-  const destinationPhotosTemplate = createDestinationPhotosTemplate(currentDestination);
+  const destinationPhotosTemplate = currentDestination !== undefined ? createDestinationPhotosTemplate(currentDestination) : '';
 
   return (
     `<li class="trip-events__item">
@@ -154,11 +149,12 @@ const createEventEditTemplate = (data) => {
               <span class="visually-hidden">Price</span>
               &euro;
             </label>
-            <input class="event__input  event__input--price" id="event-price-1" type="text" name="event-price" value="${basePrice}">
+            <input class="event__input  event__input--price" id="event-price-1" type="number" name="event-price" value="${Math.abs(Number(basePrice))}">
           </div>
 
           <button class="event__save-btn  btn  btn--blue" type="submit">Save</button>
-          <button class="event__reset-btn" type="reset">${Object.keys(data).length === 0 ? 'Cancel' : 'Delete'}</button> ${buttonEditTemplate}
+          <button class="event__reset-btn" type="reset">${data.id ? 'Delete' : 'Cancel'}</button>
+          ${buttonEditTemplate}
           <!-- <button class="event__rollup-btn" type="button">
             <span class="visually-hidden">Open event</span>
           </button> -->
@@ -176,8 +172,11 @@ const createEventEditTemplate = (data) => {
 export default class EditPointView extends AbstractStatefulView {
   #datepicker = null;
 
-  constructor(point = BLANK_POINT, allOffers, allDestinations) {
+  constructor(point, allOffers, allDestinations) {
     super();
+    if (!point) {
+      point = BLANK_POINT;
+    }
     this._state = EditPointView.parsePointToState(point, allOffers, allDestinations);
     this.#setInnerHandlers();
     this.#setFromDatepicker();
