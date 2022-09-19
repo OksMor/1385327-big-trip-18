@@ -1,38 +1,48 @@
+import { render, remove } from '../framework/render.js';
+
 import HeaderInfoView from '../view/header-info-view.js';
 import TripSortView from '../view/trip-sort-view.js';
 import TripEventsListView from '../view/trip-events-list-view.js';
 import NoPointView from '../view/no-point-view.js';
 
 import PointPresenter from './point-presenter.js';
+import NewPointPresenter from './new-point-presenter.js';
 
-import { render, remove } from '../framework/render.js';
 import { sortByDay, sortByPrice, sortByTime } from '../utils/trip-utils.js';
 import { filter } from '../utils/filter.js';
+
 import { generateTripInfo } from '../mock/info.js';
 import { FilterType, SortType, UserAction, UpdateType } from '../mock/const.js';
 
 export default class MainPresenter {
   #infoContainer = null;
   #tripContainer = null;
+
   #pointsModel = null;
   #filterModel = null;
-  #tripSortComponent = null;
 
   #tripListComponent = new TripEventsListView();
   #headerInfoComponent = null;
+  #tripSortComponent = null;
   #noPointComponent = null;
 
   #pointPresenter = new Map();
+  #newPointPresenter = null;
+
   #currentSortType = SortType.DAY;
   #filterType = FilterType.EVERYTHING;
 
   constructor( infoContainer, tripContainer, pointsModel, filterModel ) {
     this.#infoContainer = infoContainer;
     this.#tripContainer = tripContainer;
+
     this.#pointsModel = pointsModel;
     this.#filterModel = filterModel;
+
     this.#pointsModel.addObserver(this.#handleModelEvent);
     this.#filterModel.addObserver(this.#handleModelEvent);
+
+    this.#newPointPresenter = new NewPointPresenter(this.#tripListComponent, this.#handleViewAction); // this.#tripListComponent.element
   }
 
   get points() {
@@ -55,6 +65,12 @@ export default class MainPresenter {
   init = () => {
     // console.log(this.#tripPoints);
     this.#renderContent();
+  };
+
+  createPoint = (callback) => {
+    this.#currentSortType = SortType.DAY;
+    this.#filterModel.setFilter(UpdateType.MAJOR, FilterType.EVERYTHING);
+    this.#newPointPresenter.init(callback, this.#pointsModel.offersData, this.#pointsModel.destinationsData);
   };
 
   #renderHeaderInfo = () => {
@@ -120,6 +136,7 @@ export default class MainPresenter {
   };
 
   #handleModeChange = () => {
+    this.#newPointPresenter.destroy();
     this.#pointPresenter.forEach((presenter) => presenter.resetView());
   };
 
@@ -150,6 +167,7 @@ export default class MainPresenter {
 
   #clearContent = ({resetSortType = false} = {}) => {
 
+    this.#newPointPresenter.destroy();
     this.#pointPresenter.forEach((presenter) => presenter.destroy());
     this.#pointPresenter.clear();
 
@@ -161,7 +179,7 @@ export default class MainPresenter {
     }
 
     if (resetSortType) {
-      this.#currentSortType = SortType.DEFAULT;
+      this.#currentSortType = SortType.DAY;
     }
   };
 }

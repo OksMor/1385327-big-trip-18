@@ -49,7 +49,7 @@ const createCardTemplate = (point, allOffers, allDestinations) => {
         <p class="event__duration">${eventDuration(dateTo, dateFrom)}</p>
       </div>
       <p class="event__price">
-        &euro;&nbsp;<span class="event__price-value">${basePrice}</span>
+        &euro;&nbsp;<span class="event__price-value">${Number(basePrice)}</span>
       </p>
       <h4 class="visually-hidden">Offers:</h4>
         ${offersTemplate}
