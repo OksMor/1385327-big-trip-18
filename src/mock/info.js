@@ -1,11 +1,13 @@
-import { getTripInfo } from '../utils/trip-utils.js'; //переделать - названия городов а не точек, одинаковые название!
+import { getTripInfo } from '../utils/trip-utils.js';
+
+import { maxShowCities } from './const.js';
 
 export const generateTripInfo = (pointsModel) => {
 
   const tripInfo = getTripInfo(pointsModel);
   const mockTripInfo = {};
 
-  if (tripInfo.pointsSequence.length > 3) {
+  if (tripInfo.pointsSequence.length > maxShowCities) {
     let startPoint = '';
     let endPoint = '';
     for (const dest of pointsModel.destinationsData) {
