@@ -12,7 +12,7 @@ import NewPointPresenter from './new-point-presenter.js';
 import { sortByDay, sortByPrice, sortByTime } from '../utils/trip-utils.js';
 import { filter } from '../utils/filter.js';
 
-import { generateTripInfo } from '../mock/info.js';
+import { generateTripInfo } from '../mock/trip-info.js';
 import { FilterType, SortType, UserAction, UpdateType } from '../mock/const.js';
 
 export default class MainPresenter {

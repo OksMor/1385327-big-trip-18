@@ -43,7 +43,8 @@ const BLANK_POINT = {
   type: 'bus',
 };
 
-const maxShowCities = 3;
+const MAX_SHOW_CITIES = 3;
+
 export {
   FilterType,
   Mode,
@@ -51,5 +52,5 @@ export {
   UserAction,
   UpdateType,
   BLANK_POINT,
-  maxShowCities,
+  MAX_SHOW_CITIES,
 };
