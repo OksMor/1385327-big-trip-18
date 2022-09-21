@@ -1,4 +1,4 @@
-import { remove, render } from '../framework/render.js';
+import { remove, render, RenderPosition } from '../framework/render.js';
 import { nanoid } from 'nanoid';
 
 import EditPointView from '../view/edit-point-view.js';
@@ -35,7 +35,7 @@ export default class NewPointPresenter {
     this.#pointEditComponent.setFormSubmitClickHandler(this.#handleFormSubmit);
     this.#pointEditComponent.setFormDeleteClickHandler(this.#handleFormClose);
 
-    render(this.#pointEditComponent, this.#tripListContainer.element, 'afterbegin');
+    render(this.#pointEditComponent, this.#tripListContainer.element, RenderPosition.AFTERBEGIN);
     document.addEventListener('keydown', this.#onEscKeyDown);
   };
 

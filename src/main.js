@@ -1,15 +1,20 @@
+import PointsApiService from './points-api-service.js';
+
 import MainPresenter from './presenter/main-presenter.js';
 import FilterPresenter from './presenter/filter-presenter.js';
 
 import PointsModel from './model/points-model.js';
 import FilterModel from './model/filter-model.js';
 
+const AUTHORIZATION = 'Basic lsa22S2fla2f4w4w1s2j2sS4l1j';
+const END_POINT = 'https://18.ecmascript.pages.academy/big-trip';
+
 const tripMainElement = document.querySelector( '.trip-main' );
 const tripFiltersElement = tripMainElement.querySelector( '.trip-controls__filters' );
 const tripEventsElement = document.querySelector( '.trip-events' );
 const newTripEventButtonElement = document.querySelector('.trip-main__event-add-btn');
 
-const pointsModel = new PointsModel();
+const pointsModel = new PointsModel( new PointsApiService(END_POINT, AUTHORIZATION));
 const filterModel = new FilterModel();
 
 const tripPresenter = new MainPresenter(tripMainElement, tripEventsElement, pointsModel, filterModel);
@@ -24,7 +29,11 @@ const handleNewEventButtonClick = () => {
   newTripEventButtonElement.disabled = true;
 };
 
-newTripEventButtonElement.addEventListener('click', handleNewEventButtonClick);
+// newTripEventButtonElement.addEventListener('click', handleNewEventButtonClick);
 
 tripPresenter.init();
 filterPresenter.init();
+pointsModel.init().finally(() => {
+  handleNewEventFormClose();
+  newTripEventButtonElement.addEventListener('click', handleNewEventButtonClick);
+});

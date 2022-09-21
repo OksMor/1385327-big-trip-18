@@ -1,9 +1,10 @@
-import { render, remove } from '../framework/render.js';
+import { render, remove, RenderPosition } from '../framework/render.js';
 
 import HeaderInfoView from '../view/header-info-view.js';
 import TripSortView from '../view/trip-sort-view.js';
 import TripEventsListView from '../view/trip-events-list-view.js';
 import NoPointView from '../view/no-point-view.js';
+import LoadingView from '../view/loading-view.js';
 
 import PointPresenter from './point-presenter.js';
 import NewPointPresenter from './new-point-presenter.js';
@@ -11,7 +12,7 @@ import NewPointPresenter from './new-point-presenter.js';
 import { sortByDay, sortByPrice, sortByTime } from '../utils/trip-utils.js';
 import { filter } from '../utils/filter.js';
 
-import { generateTripInfo } from '../mock/info.js';
+import { generateTripInfo } from '../mock/trip-info.js';
 import { FilterType, SortType, UserAction, UpdateType } from '../mock/const.js';
 
 export default class MainPresenter {
@@ -25,12 +26,14 @@ export default class MainPresenter {
   #headerInfoComponent = null;
   #tripSortComponent = null;
   #noPointComponent = null;
+  #loadingComponent = new LoadingView();
 
   #pointPresenter = new Map();
   #newPointPresenter = null;
 
   #currentSortType = SortType.DAY;
   #filterType = FilterType.EVERYTHING;
+  #isLoading = true;
 
   constructor( infoContainer, tripContainer, pointsModel, filterModel ) {
     this.#infoContainer = infoContainer;
@@ -63,7 +66,6 @@ export default class MainPresenter {
   }
 
   init = () => {
-    // console.log(this.#tripPoints);
     this.#renderContent();
   };
 
@@ -76,7 +78,7 @@ export default class MainPresenter {
   #renderHeaderInfo = () => {
     const tripInfo = generateTripInfo(this.#pointsModel);
     this.#headerInfoComponent = new HeaderInfoView(tripInfo);
-    render( this.#headerInfoComponent, this.#infoContainer, 'afterbegin' );
+    render( this.#headerInfoComponent, this.#infoContainer, RenderPosition.AFTERBEGIN );
   };
 
   #renderNoPoints = () => {
@@ -84,10 +86,14 @@ export default class MainPresenter {
     render( this.#noPointComponent, this.#tripContainer);
   };
 
+  #renderLoading = () => {
+    render(this.#loadingComponent, this.#tripContainer, RenderPosition.AFTERBEGIN); // --------------------------------------------------------------
+  };
+
   #renderSort = () => {
-    if (this.#tripSortComponent instanceof TripSortView) {
-      remove(this.#tripSortComponent);
-    }
+    // if (this.#tripSortComponent instanceof TripSortView) {
+    //   remove(this.#tripSortComponent);
+    // }
 
     this.#tripSortComponent = new TripSortView(this.#currentSortType);
     this.#tripSortComponent.setSortTypeChangeHandler(this.#handleSortTypeChange);
@@ -121,6 +127,11 @@ export default class MainPresenter {
         this.#clearContent({resetSortType: true});
         this.#renderContent();
         break;
+      case UpdateType.INIT:
+        this.#isLoading = false;
+        remove(this.#loadingComponent);
+        this.#renderContent();
+        break;
     }
   };
 
@@ -128,9 +139,8 @@ export default class MainPresenter {
     if (this.#currentSortType === sortType) {
       return;
     }
-    // this.#sortPoints(sortType);
     this.#currentSortType = sortType;
-    this.#renderSort(sortType);
+    // this.#renderSort(sortType);
     this.#clearContent();
     this.#renderContent();
   };
@@ -153,6 +163,13 @@ export default class MainPresenter {
   };
 
   #renderContent = () => {
+    // render( this.#tripListComponent, this.#tripContainer );
+
+    if (this.#isLoading) {
+      this.#renderLoading();
+      return;
+    }
+
     if (this.points.length === 0) {
       this.#renderNoPoints();
     } else {
@@ -173,6 +190,7 @@ export default class MainPresenter {
 
     remove(this.#tripSortComponent);
     remove(this.#headerInfoComponent);
+    remove(this.#loadingComponent);
 
     if (this.#noPointComponent){
       remove(this.#noPointComponent);
