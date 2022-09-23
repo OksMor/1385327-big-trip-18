@@ -32,8 +32,8 @@ export default class NewPointPresenter {
 
     this.#pointEditComponent = new EditPointView(BLANK_POINT, this.#allOffers, this.#allDestinations);
 
-    this.#pointEditComponent.setFormSubmitClickHandler(this.#handleFormSubmit);
-    this.#pointEditComponent.setFormDeleteClickHandler(this.#handleFormClose);
+    this.#pointEditComponent.setFormSubmitClickHandler(this.#handleFormSubmitClick);
+    this.#pointEditComponent.setFormCancelClickHandler(this.#handleFormCancelClick);
 
     render(this.#pointEditComponent, this.#tripListContainer.element, RenderPosition.AFTERBEGIN);
     document.addEventListener('keydown', this.#onEscKeyDown);
@@ -70,7 +70,7 @@ export default class NewPointPresenter {
     this.#pointEditComponent.shake(resetFormState);
   };
 
-  #handleFormSubmit = (point) => {
+  #handleFormSubmitClick = (point) => {
     this.#changeData(
       UserAction.ADD_POINT,
       UpdateType.MINOR,
@@ -78,7 +78,7 @@ export default class NewPointPresenter {
     );
   };
 
-  #handleFormClose = () => {
+  #handleFormCancelClick = () => {
     this.destroy();
     document.removeEventListener('keydown', this.#onEscKeyDown);
   };

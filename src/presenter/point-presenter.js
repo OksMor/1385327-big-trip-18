@@ -38,13 +38,13 @@ export default class PointPresenter {
     this.#pointComponent = new TripItemCardView(point, this.#allOffers, this.#allDestinations);
     this.#pointEditComponent = new EditPointView(point, this.#allOffers, this.#allDestinations);
 
-    this.#pointComponent.setEditClickHandler(this.#handleEditClick);
+    this.#pointComponent.setOpenFormClickHandler(this.#handleOpenFormClick);
     this.#pointComponent.setFavoriteClickHandler(this.#handleFavoriteClick);
 
-    this.#pointEditComponent.setFormSubmitClickHandler(this.#handleFormSubmit);
-    // this.#pointEditComponent.setFormDeleteClickHandler(this.#handleFormDelete);
-    this.#pointEditComponent.setFormCancelClickHandler(this.#handleFormDelete);
-    this.#pointEditComponent.setEditFormOpenClickHandler(this.#handleClick);
+    this.#pointEditComponent.setFormSubmitClickHandler(this.#handleFormSubmitClick);
+    this.#pointEditComponent.setFormDeleteClickHandler(this.#handleFormDeleteClick);
+    this.#pointEditComponent.setFormCancelClickHandler(this.#handleFormCancelClick);
+    this.#pointEditComponent.setCloseFormClickHandler(this.#handleFormCancelClick);
 
     if (prevPointComponent === null || prevPointEditComponent === null) {
       render(this.#pointComponent, this.#tripContainer);
@@ -132,12 +132,12 @@ export default class PointPresenter {
       {...this.#point, isFavorite: !this.#point.isFavorite});
   };
 
-  #handleEditClick = () => {
-    this.#pointEditComponent.reset(this.#point);
+  #handleOpenFormClick = () => {
+    // this.#pointEditComponent.reset(this.#point);
     this.#replaceCardToForm();
   };
 
-  #handleFormSubmit = (point) => {
+  #handleFormSubmitClick = (point) => {
 
     const updatePoint = {...point};
     delete updatePoint.type;
@@ -155,7 +155,7 @@ export default class PointPresenter {
     // this.#replaceFormToCard();
   };
 
-  #handleFormDelete = (point) => {
+  #handleFormDeleteClick = (point) => {
     this.#changeData(
       UserAction.DELETE_POINT,
       UpdateType.MINOR,
@@ -164,7 +164,7 @@ export default class PointPresenter {
     document.removeEventListener('keydown', this.#onEscKeyDown);
   };
 
-  #handleClick = () => {
+  #handleFormCancelClick = () => {
     this.#pointEditComponent.reset(this.#point);
     this.#replaceFormToCard();
   };

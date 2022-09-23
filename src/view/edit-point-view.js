@@ -72,7 +72,7 @@ const createOffersTemplate = (currentOffers, selectedOffers, isDisabled) => {
   const prefix = currentOffers.type.toLowerCase().replace(' ', '-');
   return (
     `
-      <section class="event__section  event__section--offers ${currentOffers.offers.length === 0 ? 'visually-hidden' : ''}">
+      <section class="event__section  event__section--offers">
         <h3 class="event__section-title  event__section-title--offers">Offers</h3>
         <div class="event__available-offers">
           ${currentOffers.offers.map((offer) => `
@@ -97,7 +97,7 @@ const createOffersTemplate = (currentOffers, selectedOffers, isDisabled) => {
   );
 };
 
-const createEventEditTemplate = (data, allOffers, allDestinations, isDisabled, isSaving, isEdit, isDeleting) => {
+const createEventEditTemplate = (data, allOffers, allDestinations, isDisabled, isSaving, isDeleting) => {
   const {basePrice, type, dateFrom, dateTo, offers, destination} = data;
 
   const currentOffers = allOffers.find((offer) => offer.type === type);
@@ -112,11 +112,11 @@ const createEventEditTemplate = (data, allOffers, allDestinations, isDisabled, i
     ? slashesFullDate(dateTo)
     : '';
 
-  const buttonEditTemplate = isEdit
+  const buttonEditTemplate = data.id
     ? `<button class="event__rollup-btn" type="button">
         <span class="visually-hidden">Open event</span>
       </button>`
-    : ''; //  пока кнопку оставлю (data.id)
+    : '';
 
   const deleteTitle = isDeleting ? 'Deleting...' : 'Delete';
 
@@ -165,7 +165,7 @@ const createEventEditTemplate = (data, allOffers, allDestinations, isDisabled, i
 
           <button class="event__save-btn  btn  btn--blue" type="submit">${isSaving ? 'Saving...' : 'Save'}</button>
 
-          <button class="event__reset-btn ${isEdit ? 'delete' : 'cancel'}" type="reset">${isEdit ? deleteTitle : 'Cancel'}</button>
+          <button class="event__reset-btn ${data.id ? 'delete' : 'cancel'}" type="reset">${data.id ? deleteTitle : 'Cancel'}</button>
           ${buttonEditTemplate}
 
         </header>
@@ -179,7 +179,7 @@ const createEventEditTemplate = (data, allOffers, allDestinations, isDisabled, i
   );
 };
 
-export default class EditPointView extends AbstractStatefulView { // ${isEdit ? deleteTitle : 'Cancel'}
+export default class EditPointView extends AbstractStatefulView {
   #datepicker = null;
 
   #allOffers = null;
@@ -215,7 +215,7 @@ export default class EditPointView extends AbstractStatefulView { // ${isEdit ? 
 
   reset = (point) => {
     this.updateElement(
-      EditPointView.parseStateToPoint(point) //parsePointToState - parseStateToPoint
+      EditPointView.parsePointToState(point) //parsePointToState - parseStateToPoint
     );
   };
 
@@ -226,10 +226,8 @@ export default class EditPointView extends AbstractStatefulView { // ${isEdit ? 
 
     this.setFormSubmitClickHandler(this._callback.formSubmit);
     this.setFormDeleteClickHandler(this._callback.formDelete);
-    this.setFormCancelClickHandler(this._callback.editClick);
-
-    this.setEditFormOpenClickHandler(this._callback.click);
-
+    this.setFormCancelClickHandler(this._callback.click);
+    this.setCloseFormClickHandler(this._callback.click);
   };
 
   setFormSubmitClickHandler = (callback) => {
@@ -244,9 +242,9 @@ export default class EditPointView extends AbstractStatefulView { // ${isEdit ? 
   };
 
   setFormDeleteClickHandler = (callback) => {
-    if ( this.element.querySelector('.event__reset-btn .delete') ) {
+    if ( this.element.querySelector('.event__reset-btn.delete') ) {
       this._callback.formDelete = callback;
-      this.element.querySelector('.event__reset-btn .delete').addEventListener('click', this.#formDeleteHandler);
+      this.element.querySelector('.event__reset-btn.delete').addEventListener('click', this.#formDeleteHandler);
     }
   };
 
@@ -256,13 +254,13 @@ export default class EditPointView extends AbstractStatefulView { // ${isEdit ? 
   };
 
   setFormCancelClickHandler = (callback) => {
-    if ( this.element.querySelector('.event__reset-btn .cancel') ) {
+    if ( this.element.querySelector('.event__reset-btn.cancel') ) {
       this._callback.click = callback;
-      this.element.querySelector('.event__reset-btn .cancel').addEventListener('click', this.#clickHandler);
+      this.element.querySelector('.event__reset-btn.cancel').addEventListener('click', this.#clickHandler);
     }
   };
 
-  setEditFormOpenClickHandler = (callback) => {
+  setCloseFormClickHandler = (callback) => {
     if ( this.element.querySelector('.event__rollup-btn') ) {
       this._callback.click = callback;
       this.element.querySelector('.event__rollup-btn').addEventListener('click', this.#clickHandler);
@@ -272,7 +270,7 @@ export default class EditPointView extends AbstractStatefulView { // ${isEdit ? 
   #clickHandler = (evt) => {
     evt.preventDefault();
 
-    this._callback.click(EditPointView.parseStateToPoint(this._state));
+    this._callback.click(EditPointView.parseStateToPoint(this._state)); //EditPointView.parseStateToPoint(this._state)
   };
 
   #eventTypeToggleHandler = (evt) => {
@@ -372,7 +370,7 @@ export default class EditPointView extends AbstractStatefulView { // ${isEdit ? 
     ...point,
     isDisabled: false,
     isSaving: false,
-    // isDeleting: false
+    isDeleting: false
   });
 
   static parseStateToPoint = (state) => {
@@ -380,7 +378,7 @@ export default class EditPointView extends AbstractStatefulView { // ${isEdit ? 
 
     delete point.isDisabled;
     delete point.isSaving;
-    // delete point.isDeleting;
+    delete point.isDeleting;
 
     return point;
   };
