@@ -1,6 +1,8 @@
 import { remove, render, replace } from '../framework/render.js';
+
 import EditPointView from '../view/edit-point-view.js';
 import TripItemCardView from '../view/trip-item-card-view.js';
+
 import { Mode, UserAction, UpdateType } from '../mock/const.js';
 
 export default class PointPresenter {
@@ -40,8 +42,9 @@ export default class PointPresenter {
     this.#pointComponent.setFavoriteClickHandler(this.#handleFavoriteClick);
 
     this.#pointEditComponent.setFormSubmitClickHandler(this.#handleFormSubmit);
-    this.#pointEditComponent.setFormDeleteClickHandler(this.#handleFormDelete);
-    this.#pointEditComponent.setClickHandler(this.#handleClick);
+    // this.#pointEditComponent.setFormDeleteClickHandler(this.#handleFormDelete);
+    this.#pointEditComponent.setFormCancelClickHandler(this.#handleFormDelete);
+    this.#pointEditComponent.setEditFormOpenClickHandler(this.#handleClick);
 
     if (prevPointComponent === null || prevPointEditComponent === null) {
       render(this.#pointComponent, this.#tripContainer);
@@ -53,7 +56,9 @@ export default class PointPresenter {
     }
 
     if (this.#mode === Mode.EDITING) {
-      replace(this.#pointEditComponent, prevPointEditComponent);
+      // replace(this.#pointEditComponent, prevPointEditComponent);
+      replace(this.#pointComponent, prevPointEditComponent);
+      this.#mode = Mode.DEFAULT;
     }
 
     remove(prevPointComponent);
@@ -72,6 +77,41 @@ export default class PointPresenter {
     }
   };
 
+  setSaving = () => {
+    if (this.#mode === Mode.EDITING) {
+      this.#pointEditComponent.updateElement({
+        isDisabled: true,
+        isSaving: true,
+      });
+    }
+  };
+
+  setDeleting = () => {
+    if (this.#mode === Mode.EDITING) {
+      this.#pointEditComponent.updateElement({
+        isDisabled: true,
+        isDeleting: true,
+      });
+    }
+  };
+
+  setAborting = () => {
+    if (this.#mode === Mode.DEFAULT) {
+      this.#pointComponent.shake();
+      return;
+    }
+
+    const resetFormState = () => {
+      this.#pointEditComponent.updateElement({
+        isDisabled: false,
+        isSaving: false,
+        isDeleting: false,
+      });
+    };
+
+    this.#pointEditComponent.shake(resetFormState);
+  };
+
   #replaceCardToForm = () => {
     replace(this.#pointEditComponent, this.#pointComponent);
     document.addEventListener('keydown', this.#onEscKeyDown);
@@ -85,12 +125,11 @@ export default class PointPresenter {
     this.#mode = Mode.DEFAULT;
   };
 
-  #onEscKeyDown = (evt) => {
-    if (evt.key === 'Escape' || evt.key === 'Esc') {
-      evt.preventDefault();
-      this.#pointEditComponent.reset(this.#point);
-      this.#replaceFormToCard();
-    }
+  #handleFavoriteClick = () => {
+    this.#changeData(
+      UserAction.UPDATE_POINT,
+      UpdateType.MINOR,
+      {...this.#point, isFavorite: !this.#point.isFavorite});
   };
 
   #handleEditClick = () => {
@@ -113,12 +152,7 @@ export default class PointPresenter {
       isMinorUpdate ? UpdateType.MINOR : UpdateType.PATCH,
       point,
     );
-    this.#replaceFormToCard();
-  };
-
-  #handleClick = () => {
-    this.#pointEditComponent.reset(this.#point);
-    this.#replaceFormToCard();
+    // this.#replaceFormToCard();
   };
 
   #handleFormDelete = (point) => {
@@ -130,10 +164,17 @@ export default class PointPresenter {
     document.removeEventListener('keydown', this.#onEscKeyDown);
   };
 
-  #handleFavoriteClick = () => {
-    this.#changeData(
-      UserAction.UPDATE_POINT,
-      UpdateType.MINOR,
-      {...this.#point, isFavorite: !this.#point.isFavorite});
+  #handleClick = () => {
+    this.#pointEditComponent.reset(this.#point);
+    this.#replaceFormToCard();
   };
+
+  #onEscKeyDown = (evt) => {
+    if (evt.key === 'Escape' || evt.key === 'Esc') {
+      evt.preventDefault();
+      this.#pointEditComponent.reset(this.#point);
+      this.#replaceFormToCard();
+    }
+  };
+
 }

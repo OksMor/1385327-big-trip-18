@@ -42,6 +42,11 @@ const BLANK_POINT = {
 
 const MAX_SHOW_CITIES = 3;
 
+const TimeLimit = {
+  LOWER_LIMIT: 350,
+  UPPER_LIMIT: 1000,
+};
+
 export {
   FilterType,
   Mode,
@@ -50,4 +55,5 @@ export {
   UpdateType,
   BLANK_POINT,
   MAX_SHOW_CITIES,
+  TimeLimit,
 };
