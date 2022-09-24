@@ -213,9 +213,9 @@ export default class EditPointView extends AbstractStatefulView {
     }
   };
 
-  reset = (point) => {
+  reset = (point, allOffers, allDestinations) => {
     this.updateElement(
-      EditPointView.parseStateToPoint(point) //parsePointToState - parseStateToPoint
+      EditPointView.parseStateToPoint(point, allOffers, allDestinations) //parsePointToState - parseStateToPoint
     );
   };
 
