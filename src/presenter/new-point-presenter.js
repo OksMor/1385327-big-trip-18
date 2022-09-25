@@ -1,5 +1,5 @@
 import { remove, render, RenderPosition } from '../framework/render.js';
-import { nanoid } from 'nanoid';
+// import { nanoid } from 'nanoid';
 
 import EditPointView from '../view/edit-point-view.js';
 
@@ -32,8 +32,8 @@ export default class NewPointPresenter {
 
     this.#pointEditComponent = new EditPointView(BLANK_POINT, this.#allOffers, this.#allDestinations);
 
-    this.#pointEditComponent.setFormSubmitClickHandler(this.#handleFormSubmit);
-    this.#pointEditComponent.setFormDeleteClickHandler(this.#handleFormClose);
+    this.#pointEditComponent.setFormSubmitClickHandler(this.#handleFormSubmitClick);
+    this.#pointEditComponent.setFormCancelClickHandler(this.#handleFormCancelClick);
 
     render(this.#pointEditComponent, this.#tripListContainer.element, RenderPosition.AFTERBEGIN);
     document.addEventListener('keydown', this.#onEscKeyDown);
@@ -51,24 +51,42 @@ export default class NewPointPresenter {
     document.removeEventListener('keydown', this.#onEscKeyDown);
   };
 
+  setSaving = () => {
+    this.#pointEditComponent.updateElement({
+      isDisabled: true,
+      isSaving: true,
+    });
+  };
+
+  setAborting = () => {
+    const resetFormState = () => {
+      this.#pointEditComponent.updateElement({
+        isDisabled: false,
+        isSaving: false,
+        isDeleting: false,
+      });
+    };
+
+    this.#pointEditComponent.shake(resetFormState);
+  };
+
+  #handleFormSubmitClick = (point) => {
+    this.#changeData(
+      UserAction.ADD_POINT,
+      UpdateType.MINOR,
+      point,
+    );
+  };
+
+  #handleFormCancelClick = () => {
+    this.destroy();
+    document.removeEventListener('keydown', this.#onEscKeyDown);
+  };
+
   #onEscKeyDown = (evt) => {
     if (evt.key === 'Escape' || evt.key === 'Esc') {
       evt.preventDefault();
       this.destroy();
     }
   };
-
-  #handleFormSubmit = (point) => {
-    this.#changeData(
-      UserAction.ADD_POINT,
-      UpdateType.MINOR,
-      {id: nanoid(), ...point},
-    );
-  };
-
-  #handleFormClose = () => {
-    this.destroy();
-    document.removeEventListener('keydown', this.#onEscKeyDown);
-  };
-
 }

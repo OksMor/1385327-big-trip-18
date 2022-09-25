@@ -1,4 +1,4 @@
-import dayjs from 'dayjs';
+// import dayjs from 'dayjs';
 
 const FilterType = {
   EVERYTHING: 'everything',
@@ -32,18 +32,20 @@ const UpdateType = {
 
 const BLANK_POINT = {
   basePrice: 0,
-  dateFrom: dayjs(),
-  dateTo: dayjs(),
-  destination: {
-    description: '',
-    name: '',
-    pictures: []
-  },
+  dateFrom: null,
+  dateTo: null,
+  destination: '',
+  isFavorite: false,
   offers: [],
-  type: 'bus',
+  type: 'taxi',
 };
 
 const MAX_SHOW_CITIES = 3;
+
+const TimeLimit = {
+  LOWER_LIMIT: 350,
+  UPPER_LIMIT: 1000,
+};
 
 export {
   FilterType,
@@ -53,4 +55,5 @@ export {
   UpdateType,
   BLANK_POINT,
   MAX_SHOW_CITIES,
+  TimeLimit,
 };

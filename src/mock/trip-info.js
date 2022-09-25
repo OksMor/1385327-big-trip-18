@@ -11,7 +11,7 @@ export const generateTripInfo = (pointsModel) => {
   pointsSequence.sort((a, b) => dayjs(a.dateFrom).isAfter(b.dateFrom) ? 1 : -1).forEach((point) => {
     pointsModel.offersData.forEach((offersByType) => {
       if (offersByType.type === point.type) {
-        offersByType.offers.forEach((offerByType) => {
+        offersByType.offers.forEach((offerByType) => { //forEach
           if (point.offers.includes(offerByType.id)) {
             tripCost += Number(offerByType.price);
           }

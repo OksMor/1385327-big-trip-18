@@ -83,12 +83,12 @@ export default class TripItemCardView extends AbstractView {
     return createCardTemplate(this.#point, this.#allOffers, this.#allDestinations);
   }
 
-  setEditClickHandler = (callback) => {
+  setOpenFormClickHandler = (callback) => {
     this._callback.editClick = callback;
-    this.element.querySelector('.event__rollup-btn').addEventListener('click', this.#editClickHandler);
+    this.element.querySelector('.event__rollup-btn').addEventListener('click', this.#openFormClickHandler);
   };
 
-  #editClickHandler = (evt) => {
+  #openFormClickHandler = (evt) => {
     evt.preventDefault();
 
     this._callback.editClick();
