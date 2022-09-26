@@ -114,7 +114,6 @@ export default class PointsModel extends Observable{
     }
   };
 
-
   #adaptToClient = (point) => {
     const adaptedPoint = {...point,
       dateFrom: point['date_from'] !== null ? new Date(point['date_from']) : point['date_from'],
@@ -130,5 +129,4 @@ export default class PointsModel extends Observable{
 
     return adaptedPoint;
   };
-
 }

@@ -1,5 +1,3 @@
-// import dayjs from 'dayjs';
-
 const FilterType = {
   EVERYTHING: 'everything',
   FUTURE: 'future',

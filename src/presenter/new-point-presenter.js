@@ -1,5 +1,4 @@
 import { remove, render, RenderPosition } from '../framework/render.js';
-// import { nanoid } from 'nanoid';
 
 import EditPointView from '../view/edit-point-view.js';
 

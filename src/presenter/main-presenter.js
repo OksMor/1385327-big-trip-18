@@ -47,7 +47,7 @@ export default class MainPresenter {
     this.#pointsModel.addObserver(this.#handleModelEvent);
     this.#filterModel.addObserver(this.#handleModelEvent);
 
-    this.#newPointPresenter = new NewPointPresenter(this.#tripListComponent, this.#handleViewAction); // this.#tripListComponent.element
+    this.#newPointPresenter = new NewPointPresenter(this.#tripListComponent, this.#handleViewAction);
   }
 
   get points() {
@@ -94,10 +94,6 @@ export default class MainPresenter {
   };
 
   #renderSort = () => {
-    // if (this.#tripSortComponent instanceof TripSortView) {
-    //   remove(this.#tripSortComponent);
-    // }
-
     this.#tripSortComponent = new TripSortView(this.#currentSortType);
     this.#tripSortComponent.setSortTypeChangeHandler(this.#handleSortTypeChange);
     render( this.#tripSortComponent, this.#tripContainer );
@@ -174,7 +170,6 @@ export default class MainPresenter {
         catch (err) {
           this.#newPointPresenter.setAborting();
         }
-
         break;
       case UserAction.DELETE_POINT:
         this.#pointPresenter.get(update.id).setDeleting();
@@ -215,7 +210,6 @@ export default class MainPresenter {
       return;
     }
     this.#currentSortType = sortType;
-    // this.#renderSort(sortType);
     this.#clearContent();
     this.#renderContent();
   };

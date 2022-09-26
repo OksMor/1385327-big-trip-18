@@ -8,10 +8,10 @@ export const generateTripInfo = (pointsModel) => {
   const pointsSequence = pointsModel.points.slice();
   let tripCost = 0;
 
-  pointsSequence.sort((a, b) => dayjs(a.dateFrom).isAfter(b.dateFrom) ? 1 : -1).forEach((point) => {
+  pointsSequence.forEach((point) => {
     pointsModel.offersData.forEach((offersByType) => {
       if (offersByType.type === point.type) {
-        offersByType.offers.forEach((offerByType) => { //forEach
+        offersByType.offers.forEach((offerByType) => {
           if (point.offers.includes(offerByType.id)) {
             tripCost += Number(offerByType.price);
           }
@@ -50,8 +50,26 @@ export const generateTripInfo = (pointsModel) => {
     tripInfo['tripTitle'] = tripTitle.join(' — ');
   }
 
-  tripInfo['tripDateFrom'] = pointsSequence[0].dateFrom;
-  tripInfo['tripDateTo'] = pointsSequence[pointsSequence.length - 1].dateTo;
+  const dateFrom = pointsSequence[0].dateFrom;
+  const dateTo = pointsSequence[pointsSequence.length - 1].dateTo;
+  let dateFromFormat = '';
+  let dateToFormat = '';
+
+  if ( dateFrom !== null && dateTo !== null ) {
+    const dateFromMonth = dayjs(dateFrom).format('M');
+    const dateToMonth = dayjs(dateTo).format('M');
+    if ( dateFromMonth !== dateToMonth ) {
+      dateFromFormat = dayjs(dateFrom).format('MMM D');
+      dateToFormat = dayjs(dateTo).format('MMM D');
+    } else {
+      dateFromFormat = dayjs(dateFrom).format('MMM D');
+      dateToFormat = dayjs(dateTo).format('D');
+    }
+  }
+
+  tripInfo['tripDateFrom'] = dateFromFormat;
+  tripInfo['tripDateTo'] = dateToFormat;
+
   tripInfo['tripCost'] = tripCost;
 
   return tripInfo;

@@ -1,5 +1,4 @@
 import dayjs from 'dayjs';
-import { getRandomInteger } from './common';
 
 const humanizeDate = (date) => dayjs(date).format('MMM D');
 const hoursMinutesDate = (date) => dayjs(date).format('hh:mm');
@@ -14,7 +13,7 @@ const MINUTES = {
 };
 
 const eventDuration = (dateTo, dateFrom) => {
-  const fullMinutes = dayjs(dateTo).diff(dayjs(dateFrom), 'minute'); //console.log(fullMinutes);
+  const fullMinutes = dayjs(dateTo).diff(dayjs(dateFrom), 'minute');
   const hours = Math.trunc(fullMinutes / MINUTES.minuteInHour);
   const minutes = fullMinutes % MINUTES.minuteInHour;
   const days = Math.trunc(hours / MINUTES.hoursInDay);
@@ -38,15 +37,6 @@ const eventDuration = (dateTo, dateFrom) => {
   }
 };
 
-const generateDate = (dayStart, dayEnd) => {
-  const daysGap = getRandomInteger(dayStart, dayEnd);
-  const hoursGap = getRandomInteger(0, 24);
-  const minutesGap = getRandomInteger(0, 60);
-  const secondsGap = getRandomInteger(0, 60);
-
-  return dayjs().add(daysGap, 'day').add(hoursGap, 'hour').add(minutesGap, 'minute').add(secondsGap, 'second').toDate();
-};
-
 const isPointInFuture = ({dateFrom, dateTo}) => dayjs().isSame(dayjs(dateFrom)) || dayjs().isBefore(dayjs(dateFrom)) || dayjs().isAfter(dayjs(dateFrom)) && dayjs().isBefore(dayjs(dateTo));
 
 const isPointInPast = ({dateFrom, dateTo}) => dayjs().isAfter(dayjs(dateTo)) || (dayjs().isAfter(dayjs(dateFrom)) && dayjs().isBefore(dayjs(dateTo)));
@@ -67,37 +57,16 @@ const sortByTime = (a, b) => {
   return fullMinutesB - fullMinutesA;
 };
 
-const getTripInfo = (pointsModel) => {
-  const pointsSequence = pointsModel.points.slice();
-  let tripCost = 0;
-  pointsSequence.sort((a, b) => dayjs(a.dateFrom).isAfter(b.dateFrom) ? 1 : -1).forEach((point) => {
-    pointsModel.offersData.forEach((offersByType) => {
-      if (offersByType.type === point.type) {
-        offersByType.offers.forEach((offerByType) => {
-          if (point.offers.includes(offerByType.id)) {
-            tripCost += Number(offerByType.price);
-          }
-        });
-      }
-    });
-    tripCost += Math.abs(Number(point.basePrice));
-  });
-
-  return { pointsSequence, tripCost };
-};
-
 export {
   humanizeDate,
   hoursMinutesDate,
   yearMonthDate,
   fullDate,
   slashesFullDate,
-  generateDate,
   eventDuration,
   isPointInFuture,
   isPointInPast,
   sortByDay,
   sortByPrice,
   sortByTime,
-  getTripInfo,
 };
