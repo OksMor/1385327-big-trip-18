@@ -56,7 +56,6 @@ export default class PointPresenter {
     }
 
     if (this.#mode === Mode.EDITING) {
-      // replace(this.#pointEditComponent, prevPointEditComponent);
       replace(this.#pointComponent, prevPointEditComponent);
       this.#mode = Mode.DEFAULT;
     }
@@ -133,7 +132,6 @@ export default class PointPresenter {
   };
 
   #handleOpenFormClick = () => {
-    // this.#pointEditComponent.reset(this.#point);
     this.#replaceCardToForm();
   };
 
@@ -152,7 +150,6 @@ export default class PointPresenter {
       isMinorUpdate ? UpdateType.MINOR : UpdateType.PATCH,
       point,
     );
-    // this.#replaceFormToCard();
   };
 
   #handleFormDeleteClick = (point) => {
@@ -165,16 +162,15 @@ export default class PointPresenter {
   };
 
   #handleFormCancelClick = () => {
-    this.#pointEditComponent.reset(this.#point);
+    this.#pointEditComponent.reset(this.#point, this.#allOffers, this.#allDestinations);
     this.#replaceFormToCard();
   };
 
   #onEscKeyDown = (evt) => {
     if (evt.key === 'Escape' || evt.key === 'Esc') {
       evt.preventDefault();
-      this.#pointEditComponent.reset(this.#point);
+      this.#pointEditComponent.reset(this.#point, this.#allOffers, this.#allDestinations);
       this.#replaceFormToCard();
     }
   };
-
 }

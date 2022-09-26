@@ -6,7 +6,7 @@ import FilterPresenter from './presenter/filter-presenter.js';
 import PointsModel from './model/points-model.js';
 import FilterModel from './model/filter-model.js';
 
-const AUTHORIZATION = 'Basic lsa22S2fla2f4w4w1s2j2sS4l1j';
+const AUTHORIZATION = 'Basic lsa22S2fla2f4w4w1s2j2sS4l1j1';
 const END_POINT = 'https://18.ecmascript.pages.academy/big-trip';
 
 const tripMainElement = document.querySelector( '.trip-main' );
@@ -28,8 +28,6 @@ const handleNewEventButtonClick = () => {
   mainPresenter.createPoint(handleNewEventFormClose);
   newTripEventButtonElement.disabled = true;
 };
-
-// newTripEventButtonElement.addEventListener('click', handleNewEventButtonClick);
 
 mainPresenter.init();
 filterPresenter.init();

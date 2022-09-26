@@ -44,7 +44,7 @@ const createDestinationsTemplate = (currentDestination, allDestinations, type, i
       name="event-destination"
       value="${currentDestination !== undefined ? he.encode(currentDestination.name) : ''}"
       required
-      autocomplete="disabled"
+      autocomplete="off"
       list="destination-list-1">
     <datalist id="destination-list-1">
       ${allDestinations.map((destination) => `<option value="${destination.name}" ${isDisabled ? 'disabled' : ''}></option>`).join('')}
@@ -97,8 +97,8 @@ const createOffersTemplate = (currentOffers, selectedOffers, isDisabled) => {
   );
 };
 
-const createEventEditTemplate = (data, allOffers, allDestinations, isDisabled, isSaving, isDeleting) => {
-  const {basePrice, type, dateFrom, dateTo, offers, destination} = data;
+const createEventEditTemplate = (data, allOffers, allDestinations) => {
+  const {basePrice, type, dateFrom, dateTo, offers, destination, isDisabled, isSaving, isDeleting} = data;
 
   const currentOffers = allOffers.find((offer) => offer.type === type);
   const selectedOffers = allOffers.find((offer) => offer.type === type).offers.filter((offer) => offers.includes(offer.id));
@@ -122,10 +122,10 @@ const createEventEditTemplate = (data, allOffers, allDestinations, isDisabled, i
 
   const eventTypesTemplate = createEventTypesTemplate(allOffers, type, isDisabled);
 
-  const offersTemplate = currentOffers !== undefined ? createOffersTemplate(currentOffers, selectedOffers, isDisabled) : '';
+  const offersTemplate = ((currentOffers !== undefined) && (currentOffers.offers.length !== 0)) ? createOffersTemplate(currentOffers, selectedOffers, isDisabled) : '';
 
   const destinationsTemplate = createDestinationsTemplate(currentDestination, allDestinations, type, isDisabled);
-  const destinationPhotosTemplate = currentDestination !== undefined ? createDestinationPhotosTemplate(currentDestination) : '';
+  const destinationPhotosTemplate = ((currentDestination !== undefined) && (currentDestination.pictures !== 0) && (currentDestination.description !== '')) ? createDestinationPhotosTemplate(currentDestination) : '';
 
   return (
     `<li class="trip-events__item">
@@ -270,7 +270,7 @@ export default class EditPointView extends AbstractStatefulView {
   #clickHandler = (evt) => {
     evt.preventDefault();
 
-    this._callback.click(EditPointView.parseStateToPoint(this._state)); //EditPointView.parseStateToPoint(this._state)
+    this._callback.click(EditPointView.parseStateToPoint(this._state));
   };
 
   #eventTypeToggleHandler = (evt) => {
