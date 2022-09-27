@@ -3,7 +3,7 @@ import { remove, render, replace } from '../framework/render.js';
 import EditPointView from '../view/edit-point-view.js';
 import TripItemCardView from '../view/trip-item-card-view.js';
 
-import { Mode, UserAction, UpdateType } from '../mock/const.js';
+import { Mode, UserAction, UpdateType } from '../const.js';
 
 export default class PointPresenter {
   #tripContainer = null;

@@ -1,4 +1,4 @@
-import { FilterType } from '../mock/const.js';
+import { FilterType } from '../const.js';
 import { isPointInFuture, isPointInPast } from './trip-utils.js';
 
 const filter = {

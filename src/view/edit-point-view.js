@@ -187,9 +187,7 @@ export default class EditPointView extends AbstractStatefulView {
 
   constructor(point, allOffers, allDestinations) {
     super();
-    // if (!point) {
-    //   point = BLANK_POINT;
-    // }
+
     this.#allOffers = allOffers;
     this.#allDestinations = allDestinations;
 
@@ -215,7 +213,7 @@ export default class EditPointView extends AbstractStatefulView {
 
   reset = (point, allOffers, allDestinations) => {
     this.updateElement(
-      EditPointView.parseStateToPoint(point, allOffers, allDestinations) //parsePointToState - parseStateToPoint
+      EditPointView.parseStateToPoint(point, allOffers, allDestinations)
     );
   };
 
@@ -355,14 +353,9 @@ export default class EditPointView extends AbstractStatefulView {
   };
 
   #setInnerHandlers = () => {
-    // this.element.querySelector('.event__type-list').addEventListener('click', this.#eventTypeToggleHandler);
     Array.from(this.element.querySelectorAll('.event__type-input')).forEach((eventType) => eventType.addEventListener('click', this.#eventTypeToggleHandler));
-
-    // this.element.querySelector('.event__section--offers').addEventListener('click', this.#eventOffersToggleHandler);
     Array.from(this.element.querySelectorAll('.event__offer-checkbox')).forEach((eventOffer) => eventOffer.addEventListener('change', this.#eventOffersToggleHandler));
-
     this.element.querySelector('.event__input--destination').addEventListener( 'change', this.#eventDestinationInputHandler);
-
     this.element.querySelector('#event-price-1').addEventListener('input', this.#eventPriceChangeHandler);
   };
 

@@ -2,7 +2,7 @@ import { remove, render, RenderPosition } from '../framework/render.js';
 
 import EditPointView from '../view/edit-point-view.js';
 
-import { UserAction, UpdateType, BLANK_POINT } from '../mock/const.js';
+import { UserAction, UpdateType, BLANK_POINT } from '../const.js';
 
 export default class NewPointPresenter {
   #tripListContainer = null;

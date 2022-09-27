@@ -88,15 +88,15 @@ export default class TripItemCardView extends AbstractView {
     this.element.querySelector('.event__rollup-btn').addEventListener('click', this.#openFormClickHandler);
   };
 
+  setFavoriteClickHandler = (callback) => {
+    this._callback.favoriteClick = callback;
+    this.element.querySelector('.event__favorite-btn').addEventListener('click', this.#favoriteClickHandler);
+  };
+
   #openFormClickHandler = (evt) => {
     evt.preventDefault();
 
     this._callback.editClick();
-  };
-
-  setFavoriteClickHandler = (callback) => {
-    this._callback.favoriteClick = callback;
-    this.element.querySelector('.event__favorite-btn').addEventListener('click', this.#favoriteClickHandler);
   };
 
   #favoriteClickHandler = (evt) => {
@@ -104,5 +104,4 @@ export default class TripItemCardView extends AbstractView {
 
     this._callback.favoriteClick();
   };
-
 }

@@ -1,5 +1,5 @@
 import Observable from '../framework/observable.js';
-import { UpdateType } from '../mock/const.js';
+import { UpdateType } from '../const';
 
 export default class PointsModel extends Observable{
   #pointsApiService = null;
@@ -70,7 +70,6 @@ export default class PointsModel extends Observable{
 
       this._notify(updateType, updatedPoint);
     }
-
     catch(err) {
       throw new Error('Can\'t update point');
     }
@@ -86,7 +85,6 @@ export default class PointsModel extends Observable{
 
       this._notify(updateType, newPoint);
     }
-
     catch(err) {
       throw new Error('Can\'t add point');
     }
@@ -108,7 +106,6 @@ export default class PointsModel extends Observable{
 
       this._notify(updateType);
     }
-
     catch(err) {
       throw new Error('Can\'t delete point');
     }

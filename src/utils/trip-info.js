@@ -1,11 +1,14 @@
 import dayjs from 'dayjs';
-import { MAX_SHOW_CITIES } from './const.js';
+import { MAX_SHOW_CITIES } from '../const.js';
 
 
 export const generateTripInfo = (pointsModel) => {
 
   const tripInfo = {};
   const pointsSequence = pointsModel.points.slice();
+  const dateFrom = pointsSequence[0].dateFrom;
+  const dateTo = pointsSequence[pointsSequence.length - 1].dateTo;
+
   let tripCost = 0;
 
   pointsSequence.forEach((point) => {
@@ -20,6 +23,8 @@ export const generateTripInfo = (pointsModel) => {
     });
     tripCost += Math.abs(Number(point.basePrice));
   });
+
+  tripInfo['tripCost'] = tripCost;
 
   if (pointsSequence.length > MAX_SHOW_CITIES) {
     let startPoint = '';
@@ -50,14 +55,13 @@ export const generateTripInfo = (pointsModel) => {
     tripInfo['tripTitle'] = tripTitle.join(' — ');
   }
 
-  const dateFrom = pointsSequence[0].dateFrom;
-  const dateTo = pointsSequence[pointsSequence.length - 1].dateTo;
-  let dateFromFormat = '';
-  let dateToFormat = '';
-
   if ( dateFrom !== null && dateTo !== null ) {
+    let dateFromFormat = '';
+    let dateToFormat = '';
+
     const dateFromMonth = dayjs(dateFrom).format('M');
     const dateToMonth = dayjs(dateTo).format('M');
+
     if ( dateFromMonth !== dateToMonth ) {
       dateFromFormat = dayjs(dateFrom).format('MMM D');
       dateToFormat = dayjs(dateTo).format('MMM D');
@@ -65,12 +69,10 @@ export const generateTripInfo = (pointsModel) => {
       dateFromFormat = dayjs(dateFrom).format('MMM D');
       dateToFormat = dayjs(dateTo).format('D');
     }
+
+    tripInfo['tripDateFrom'] = dateFromFormat;
+    tripInfo['tripDateTo'] = dateToFormat;
   }
-
-  tripInfo['tripDateFrom'] = dateFromFormat;
-  tripInfo['tripDateTo'] = dateToFormat;
-
-  tripInfo['tripCost'] = tripCost;
 
   return tripInfo;
 };

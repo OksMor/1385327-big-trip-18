@@ -12,9 +12,8 @@ import NewPointPresenter from './new-point-presenter.js';
 
 import { sortByDay, sortByPrice, sortByTime } from '../utils/trip-utils.js';
 import { filter } from '../utils/filter.js';
-
-import { generateTripInfo } from '../mock/trip-info.js';
-import { FilterType, SortType, UserAction, UpdateType, TimeLimit } from '../mock/const.js';
+import { generateTripInfo } from '../utils/trip-info.js';
+import { FilterType, SortType, UserAction, UpdateType, TimeLimit } from '../const.js';
 
 export default class MainPresenter {
   #infoContainer = null;
