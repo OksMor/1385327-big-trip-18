@@ -136,6 +136,7 @@ export default class PointPresenter {
   };
 
   #handleFormSubmitClick = (point) => {
+    document.removeEventListener('keydown', this.#onEscKeyDown);
 
     const updatePoint = {...point};
     delete updatePoint.type;

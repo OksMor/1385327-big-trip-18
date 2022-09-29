@@ -180,7 +180,8 @@ const createEventEditTemplate = (data, allOffers, allDestinations) => {
 };
 
 export default class EditPointView extends AbstractStatefulView {
-  #datepicker = null;
+  #datepickerFrom = null;
+  #datepickerTo = null;
 
   #allOffers = null;
   #allDestinations = null;
@@ -205,9 +206,14 @@ export default class EditPointView extends AbstractStatefulView {
   removeElement = () => {
     super.removeElement();
 
-    if (this.#datepicker) {
-      this.#datepicker.destroy();
-      this.#datepicker = null;
+    if (this.#datepickerFrom) {
+      this.#datepickerFrom.destroy();
+      this.#datepickerFrom = null;
+    }
+
+    if (this.#datepickerTo) {
+      this.#datepickerTo.destroy();
+      this.#datepickerTo = null;
     }
   };
 
@@ -233,22 +239,11 @@ export default class EditPointView extends AbstractStatefulView {
     this.element.querySelector('form').addEventListener('submit', this.#formSubmitHandler);
   };
 
-  #formSubmitHandler = (evt) => {
-    evt.preventDefault();
-
-    this._callback.formSubmit(EditPointView.parseStateToPoint(this._state));
-  };
-
   setFormDeleteClickHandler = (callback) => {
     if ( this.element.querySelector('.event__reset-btn.delete') ) {
       this._callback.formDelete = callback;
       this.element.querySelector('.event__reset-btn.delete').addEventListener('click', this.#formDeleteHandler);
     }
-  };
-
-  #formDeleteHandler = (evt) => {
-    evt.preventDefault();
-    this._callback.formDelete(EditPointView.parseStateToPoint(this._state));
   };
 
   setFormCancelClickHandler = (callback) => {
@@ -263,6 +258,17 @@ export default class EditPointView extends AbstractStatefulView {
       this._callback.click = callback;
       this.element.querySelector('.event__rollup-btn').addEventListener('click', this.#clickHandler);
     }
+  };
+
+  #formSubmitHandler = (evt) => {
+    evt.preventDefault();
+
+    this._callback.formSubmit(EditPointView.parseStateToPoint(this._state));
+  };
+
+  #formDeleteHandler = (evt) => {
+    evt.preventDefault();
+    this._callback.formDelete(EditPointView.parseStateToPoint(this._state));
   };
 
   #clickHandler = (evt) => {
@@ -324,7 +330,7 @@ export default class EditPointView extends AbstractStatefulView {
 
   #setFromDatepicker = () => {
     const dateStartInput = this.element.querySelector('input[name="event-start-time"]');
-    this.#datepicker = flatpickr(
+    this.#datepickerFrom = flatpickr(
       dateStartInput,
       {
         enableTime: true,
@@ -339,7 +345,7 @@ export default class EditPointView extends AbstractStatefulView {
   #setToDatepicker = () => {
     const dateStartInput = this.element.querySelector('input[name="event-start-time"]');
     const dateEndInput = this.element.querySelector('input[name="event-end-time"]');
-    this.#datepicker = flatpickr(
+    this.#datepickerTo = flatpickr(
       dateEndInput,
       {
         enableTime: true,
