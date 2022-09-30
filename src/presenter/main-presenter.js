@@ -105,8 +105,8 @@ export default class MainPresenter {
   };
 
   #renderPoints = () => {
-    for ( let i = 0; i < this.points.length; i++ ) {
-      this.#renderPoint( this.points[i] );
+    for(const point of this.points) {
+      this.#renderPoint(point);
     }
   };
 

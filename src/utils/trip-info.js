@@ -1,11 +1,12 @@
 import dayjs from 'dayjs';
 import { MAX_SHOW_CITIES } from '../const.js';
+import { sortByDay } from './trip-utils.js';
 
 
 export const generateTripInfo = (pointsModel) => {
 
   const tripInfo = {};
-  const pointsSequence = pointsModel.points.slice();
+  const pointsSequence = pointsModel.points.slice().sort(sortByDay);
   const dateFrom = pointsSequence[0].dateFrom;
   const dateTo = pointsSequence[pointsSequence.length - 1].dateTo;
 
@@ -27,30 +28,12 @@ export const generateTripInfo = (pointsModel) => {
   tripInfo['tripCost'] = tripCost;
 
   if (pointsSequence.length > MAX_SHOW_CITIES) {
-    let startPoint = '';
-    let endPoint = '';
-
-    for (const dest of pointsModel.destinationsData) {
-      if (pointsSequence[0].destination === dest.id) {
-        startPoint = dest.name;
-      }
-    }
-
-    for (const dest of pointsModel.destinationsData) {
-      if (pointsSequence[pointsSequence.length - 1].destination === dest.id) {
-        endPoint = dest.name;
-      }
-    }
+    const startPoint = pointsModel.destinationsData.find((dest) => pointsSequence[0].destination === dest.id).name;
+    const endPoint = pointsModel.destinationsData.find((dest) => pointsSequence[pointsSequence.length - 1].destination === dest.id).name;
 
     tripInfo['tripTitle'] = `${startPoint} —...— ${endPoint}`;
   } else {
-    const tripTitle = pointsSequence.map((point) => {
-      for (const dest of pointsModel.destinationsData) {
-        if (point.destination === dest.id) {
-          return dest.name;
-        }
-      }
-    });
+    const tripTitle = pointsSequence.map((point) => pointsModel.destinationsData.find((dest) => point.destination === dest.id).name);
 
     tripInfo['tripTitle'] = tripTitle.join(' — ');
   }
